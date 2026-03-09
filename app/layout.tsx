@@ -21,14 +21,6 @@ export const metadata: Metadata = {
     title: "VALAR Macro Screener",
     description: "Macro Pulse Intelligence System — Professional Macro Risk Terminal",
     type: "website",
-    images: ["https://replit.com/public/images/opengraph.png"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@replit",
-    title: "VALAR Macro Screener",
-    description: "Macro Pulse Intelligence System — Professional Macro Risk Terminal",
-    images: ["https://replit.com/public/images/opengraph.png"],
   },
 };
 
