@@ -1,32 +1,45 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import { ThemeProvider } from "@/components/theme-provider"
-import "./globals.css"
+import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: "FinScreen - Financial Data Screener",
-  description: "Professional financial data screening and analysis platform",
-  generator: "v0.app",
-}
+  title: "VALAR Macro Screener",
+  description: "Macro Pulse Intelligence System — Professional Macro Risk Terminal",
+  openGraph: {
+    title: "VALAR Macro Screener",
+    description: "Macro Pulse Intelligence System — Professional Macro Risk Terminal",
+    type: "website",
+    images: ["https://replit.com/public/images/opengraph.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@replit",
+    title: "VALAR Macro Screener",
+    description: "Macro Pulse Intelligence System — Professional Macro Risk Terminal",
+    images: ["https://replit.com/public/images/opengraph.png"],
+  },
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
-        <Analytics />
-      </body>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>{children}</body>
     </html>
-  )
+  );
 }

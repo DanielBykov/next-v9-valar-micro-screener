@@ -1,0 +1,229 @@
+🎯 FRONTEND VISUAL SPECIFICATION (LIGHT THEME VERSION)
+
+Use this to update the dashboard UI.
+
+🎨 DESIGN SYSTEM — LIGHT ANALYTICAL MODE
+
+The dashboard must use a light, institutional, professional color palette.
+
+Background
+
+Main background: very light grey (#F5F7FA or similar)
+
+Cards: pure white (#FFFFFF)
+
+Borders: subtle grey (#E3E6EB)
+
+No dark mode as default
+
+Accent Colors
+
+Neutral regime → muted blue
+
+Fragile → soft amber
+
+Risk-Off → soft red
+
+Constructive → soft green
+
+No aggressive neon or trading-style colors.
+
+Typography must be clean, modern, readable (Inter, SF Pro, or similar).
+
+The visual identity should resemble:
+
+Institutional research dashboard
+
+Risk analytics platform
+
+Professional macro intelligence tool
+
+Not crypto terminal.
+Not Bloomberg clone.
+Not trading app.
+
+🔷 LAYOUT STRUCTURE
+1️⃣ TOP SECTION — MACRO PULSE DIAL (Primary Focus)
+
+Full-width section at top.
+
+Left Side (Main Visual)
+
+Large circular gauge on white card.
+
+Display:
+
+81 / 120
+
+Regime label below: “Neutral / Balanced”
+
+Small subtitle: “Leaning Fragile”
+
+Needle showing score position
+
+5 regime color bands on dial
+
+Small text: “Snapshot: 1 Feb 2026”
+
+The gauge should feel analytical, not flashy.
+
+Right Side — KPI Context Cards
+
+On same row, 4 clean small cards:
+
+KPI	Value
+vs Yesterday	-1
+vs 3M Avg	-4
+vs 1Y Avg	-7
+1Y Ago	92
+
+Cards must be:
+
+White
+
+Subtle shadow
+
+Clean typography
+
+No heavy color blocks
+
+2️⃣ SIX BLOCK GRID (2 + 2 + 2)
+
+Below main dial section.
+
+Structured grid:
+
+Row 1:
+
+Block 1
+
+Block 2
+
+Row 2:
+
+Block 3
+
+Block 4
+
+Row 3:
+
+Block 5
+
+Block 6
+
+Each block must be a white card with:
+
+Inside Each Block Card:
+
+Top row:
+
+Block Name
+
+Block Score (e.g., 13 / 20)
+
+Middle:
+
+Horizontal progress bar (light grey track, colored fill)
+
+Bottom:
+
+Short summary sentence (generated)
+
+2 top drivers listed compactly
+
+Example:
+
+Rates & Central Bank Policy
+13 / 20
+
+[Progress Bar]
+
+“Tight monetary conditions remain restrictive.”
+
+Drivers:
+
+Yield Curve: 1/5
+
+Forward Guidance: 2/5
+
+Cards must feel structured and calm.
+
+3️⃣ TREND SECTION
+
+Full-width white card below blocks.
+
+Title: “Macro Pulse Trend — 12 Months”
+
+Line chart:
+
+Smooth line
+
+Light blue line
+
+Background white
+
+Subtle gridlines
+
+Highlight regime shifts using light background shading.
+
+4️⃣ EXPANDABLE METRIC TABLE
+
+Collapsible section at bottom:
+
+Button:
+“View Detailed 36-Metric Breakdown”
+
+When opened:
+Table with clean grid.
+
+Columns:
+
+Domain
+
+Metric
+
+Score
+
+Interpretation
+
+Keep spacing clean.
+
+📐 VISUAL HIERARCHY
+
+Dial (dominant)
+
+KPI comparison cards
+
+6 block summaries
+
+Trend chart
+
+Detailed table
+
+Everything aligned, spaced, breathable.
+
+🧠 UX PHILOSOPHY
+
+The dashboard must feel like:
+
+A macro risk control center
+
+A portfolio manager’s morning screen
+
+A structured intelligence tool
+
+It must not feel:
+
+Emotional
+
+Speculative
+
+Retail-trading oriented
+
+🌤 Overall Mood
+
+Light
+Structured
+Analytical
+Calm
+Professional
