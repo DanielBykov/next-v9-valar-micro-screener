@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const snapshots = pgTable("snapshots", {
   id: serial("id").primaryKey(),
-  snapshotDate: date("snapshot_date").notNull(),
+  snapshotDate: date("snapshot_date").notNull().unique(),
   totalScore: integer("total_score").notNull(),
   regime: text("regime").notNull(),
   regimeSubtitle: text("regime_subtitle"),

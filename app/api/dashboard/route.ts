@@ -1,17 +1,29 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { storage } from "@/lib/storage";
 import { seedDatabase } from "@/lib/seed";
 
 let seeded = false;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     if (!seeded) {
       await seedDatabase();
       seeded = true;
     }
 
-    const snapshot = await storage.getLatestSnapshot();
+    const snapshotIdParam = request.nextUrl.searchParams.get("snapshotId");
+
+    let snapshot;
+    if (snapshotIdParam) {
+      const id = Number(snapshotIdParam);
+      if (Number.isNaN(id)) {
+        return NextResponse.json({ message: "Invalid snapshotId." }, { status: 400 });
+      }
+      snapshot = await storage.getSnapshotById(id);
+    } else {
+      snapshot = await storage.getLatestSnapshot();
+    }
+
     if (!snapshot) {
       return NextResponse.json({ message: "No snapshot data found." }, { status: 404 });
     }

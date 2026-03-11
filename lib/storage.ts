@@ -1,4 +1,4 @@
-import { eq, asc, desc } from "drizzle-orm";
+import { eq, asc, desc, inArray } from "drizzle-orm";
 import { db } from "./db";
 import {
   snapshots, blocks, metrics, trendPoints,
@@ -10,6 +10,9 @@ import {
 
 export interface IStorage {
   getLatestSnapshot(): Promise<Snapshot | undefined>;
+  getSnapshotById(id: number): Promise<Snapshot | undefined>;
+  getSnapshotByDate(date: string): Promise<Snapshot | undefined>;
+  getSnapshotList(): Promise<Pick<Snapshot, 'id' | 'snapshotDate' | 'totalScore' | 'regime'>[]>;
   getBlocksBySnapshot(snapshotId: number): Promise<Block[]>;
   getMetricsByBlock(blockId: number): Promise<Metric[]>;
   getAllMetricsBySnapshot(snapshotId: number): Promise<Metric[]>;
@@ -18,13 +21,36 @@ export interface IStorage {
   createBlock(data: InsertBlock): Promise<Block>;
   createMetric(data: InsertMetric): Promise<Metric>;
   createTrendPoint(data: InsertTrendPoint): Promise<TrendPoint>;
+  deleteSnapshot(id: number): Promise<void>;
   hasData(): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
   async getLatestSnapshot(): Promise<Snapshot | undefined> {
-    const results = await db.select().from(snapshots).orderBy(desc(snapshots.id)).limit(1);
+    const results = await db.select().from(snapshots).orderBy(desc(snapshots.snapshotDate)).limit(1);
     return results[0];
+  }
+
+  async getSnapshotById(id: number): Promise<Snapshot | undefined> {
+    const results = await db.select().from(snapshots).where(eq(snapshots.id, id)).limit(1);
+    return results[0];
+  }
+
+  async getSnapshotByDate(date: string): Promise<Snapshot | undefined> {
+    const results = await db.select().from(snapshots).where(eq(snapshots.snapshotDate, date)).limit(1);
+    return results[0];
+  }
+
+  async getSnapshotList(): Promise<Pick<Snapshot, 'id' | 'snapshotDate' | 'totalScore' | 'regime'>[]> {
+    return db
+      .select({
+        id: snapshots.id,
+        snapshotDate: snapshots.snapshotDate,
+        totalScore: snapshots.totalScore,
+        regime: snapshots.regime,
+      })
+      .from(snapshots)
+      .orderBy(desc(snapshots.snapshotDate));
   }
 
   async getBlocksBySnapshot(snapshotId: number): Promise<Block[]> {
@@ -67,6 +93,17 @@ export class DatabaseStorage implements IStorage {
   async createTrendPoint(data: InsertTrendPoint): Promise<TrendPoint> {
     const [result] = await db.insert(trendPoints).values(data).returning();
     return result;
+  }
+
+  async deleteSnapshot(id: number): Promise<void> {
+    const snapshotBlocks = await this.getBlocksBySnapshot(id);
+    const blockIds = snapshotBlocks.map((b) => b.id);
+    if (blockIds.length > 0) {
+      await db.delete(metrics).where(inArray(metrics.blockId, blockIds));
+    }
+    await db.delete(blocks).where(eq(blocks.snapshotId, id));
+    await db.delete(trendPoints).where(eq(trendPoints.snapshotId, id));
+    await db.delete(snapshots).where(eq(snapshots.id, id));
   }
 
   async hasData(): Promise<boolean> {
