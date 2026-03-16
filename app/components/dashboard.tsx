@@ -8,6 +8,8 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/app/components/ui/collapsible";
 import { Button } from "@/app/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/app/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Calendar as CalendarWidget } from "@/app/components/ui/calendar";
 import { ChevronDown, ChevronUp, Calendar, Info, Activity } from "lucide-react";
 
 const GAUGE_DATA = [
@@ -108,6 +110,7 @@ export default function Home() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     fetch("/api/dashboard")
@@ -159,10 +162,23 @@ export default function Home() {
               <span className="text-sm font-semibold tracking-wide text-[#F8FAFC]">VALAR</span>
               <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence</span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>{formatSnapshotDate(snapshot.snapshotDate)}</span>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono hover:text-[#F8FAFC] transition-colors px-2 py-1 -mx-2 -my-1 rounded hover:bg-[#1E293B]">
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span>{formatSnapshotDate(snapshot.snapshotDate)}</span>
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-auto p-0 bg-[#111827] border-[#334155]">
+                <CalendarWidget
+                  mode="single"
+                  selected={selectedDate ?? new Date(snapshot.snapshotDate + "T00:00:00")}
+                  onSelect={setSelectedDate}
+                  defaultMonth={new Date(snapshot.snapshotDate + "T00:00:00")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </header>
 
