@@ -278,7 +278,7 @@ export default function Home() {
     );
   }
 
-  const { snapshot, blocks: blocksData, metrics: metricsData, trend: trendData } = data;
+  const { snapshot, blocks: blocksData, metrics: metricsData, trend: trendData } = data!;
   const needleRotation = (snapshot.totalScore / 120) * 180 - 90;
   const deltaYoY = snapshot.oneYearAgoScore ? snapshot.totalScore - snapshot.oneYearAgoScore : null;
 
@@ -432,7 +432,7 @@ export default function Home() {
               <div className="h-px flex-1 bg-[#334155]" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {blocksData.map((block, i) => {
+              {blocksData.map((block: DashboardData["blocks"][number], i: number) => {
                 const signal = getBlockSignal(block.score);
                 return (
                   <div
@@ -457,7 +457,7 @@ export default function Home() {
 
                     <div className="px-5 py-3">
                       <div className="space-y-2">
-                        {block.metrics.map((metric) => (
+                        {block.metrics.map((metric: DashboardData["blocks"][number]["metrics"][number]) => (
                           <Tooltip key={metric.id}>
                             <TooltipTrigger asChild>
                               <div className="flex items-center gap-3 group cursor-default">
@@ -488,7 +488,7 @@ export default function Home() {
                         <div className="flex gap-3 mb-2">
                           <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider flex-shrink-0 pt-0.5">Drivers</span>
                           <div className="flex flex-wrap gap-x-4 gap-y-1">
-                            {block.drivers.map((d, j) => (
+                            {block.drivers.map((d: { name: string; score: number }, j: number) => (
                               <span key={j} className="text-xs text-[#94A3B8]">
                                 {d.name}: <span className="font-mono text-[#F8FAFC]">{d.score}/5</span>
                               </span>
@@ -585,7 +585,7 @@ export default function Home() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#334155]/50">
-                      {metricsData.map((metric) => (
+                      {metricsData.map((metric: DashboardData["metrics"][number]) => (
                         <tr key={metric.id} className="hover:bg-[#1E293B]/50 transition-colors" data-testid={`row-metric-${metric.id}`}>
                           <td className="px-5 py-3 text-[#94A3B8] text-xs whitespace-nowrap">{metric.domain}</td>
                           <td className="px-5 py-3 text-[#F8FAFC] text-xs font-medium">{metric.name}</td>
