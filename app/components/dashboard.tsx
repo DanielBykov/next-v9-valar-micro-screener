@@ -259,7 +259,7 @@ export default function Home() {
       });
   }, [selectedDate]);
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
         <div className="flex items-center gap-3 text-[#94A3B8]">
@@ -270,7 +270,7 @@ export default function Home() {
     );
   }
 
-  if (error || !data) {
+  if (!isLoading && (error || !data)) {
     return (
       <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
         <div className="text-red-400 font-mono text-sm">System error: Failed to load dashboard data.</div>
@@ -284,7 +284,16 @@ export default function Home() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-[#0F172A] text-[#F8FAFC] font-sans pb-16">
+      <div className="relative min-h-screen bg-[#0F172A] text-[#F8FAFC] font-sans pb-16">
+
+        {isLoading && data && (
+          <div className="fixed inset-0 z-50 bg-[#0F172A]/70 flex items-center justify-center">
+            <div className="flex items-center gap-3 text-[#94A3B8]">
+              <Activity className="h-5 w-5 animate-pulse" />
+              <span className="font-mono text-sm">Loading macro intelligence...</span>
+            </div>
+          </div>
+        )}
 
         <header className="border-b border-[#334155] bg-[#111827]">
           <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
