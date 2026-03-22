@@ -12,9 +12,12 @@ export async function GET(request: NextRequest) {
     }
 
     const snapshotIdParam = request.nextUrl.searchParams.get("snapshotId");
+    const dateParam = request.nextUrl.searchParams.get("date");
 
     let snapshot;
-    if (snapshotIdParam) {
+    if (dateParam) {
+      snapshot = await storage.getSnapshotByDate(dateParam);
+    } else if (snapshotIdParam) {
       const id = Number(snapshotIdParam);
       if (Number.isNaN(id)) {
         return NextResponse.json({ message: "Invalid snapshotId." }, { status: 400 });

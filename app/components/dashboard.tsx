@@ -111,11 +111,29 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
+  // Fetch list of available snapshot dates
   useEffect(() => {
-    fetch("/api/dashboard")
+    fetch("/api/snapshots")
+      .then((res) => res.json())
+      .then((list: Array<{ snapshotDate: string }>) => {
+        setAvailableDates(new Set(list.map((s) => s.snapshotDate)));
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch dashboard data (initial load or when date changes)
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    const url = selectedDate
+      ? `/api/dashboard?date=${selectedDate.toISOString().slice(0, 10)}`
+      : "/api/dashboard";
+    fetch(url)
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
+        if (!res.ok) throw new Error("No data for this date");
         return res.json();
       })
       .then((d) => {
@@ -126,7 +144,7 @@ export default function Home() {
         setError(err.message);
         setIsLoading(false);
       });
-  }, []);
+  }, [selectedDate]);
 
   if (isLoading) {
     return (
@@ -162,7 +180,7 @@ export default function Home() {
               <span className="text-sm font-semibold tracking-wide text-[#F8FAFC]">VALAR</span>
               <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence</span>
             </div>
-            <Popover>
+            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono hover:text-[#F8FAFC] transition-colors px-2 py-1 -mx-2 -my-1 rounded hover:bg-[#1E293B]">
                   <Calendar className="h-3.5 w-3.5" />
@@ -174,8 +192,15 @@ export default function Home() {
                 <CalendarWidget
                   mode="single"
                   selected={selectedDate ?? new Date(snapshot.snapshotDate + "T00:00:00")}
-                  onSelect={setSelectedDate}
+                  onSelect={(date) => {
+                    setSelectedDate(date);
+                    setCalendarOpen(false);
+                  }}
                   defaultMonth={new Date(snapshot.snapshotDate + "T00:00:00")}
+                  disabled={(date) => {
+                    const iso = date.toISOString().slice(0, 10);
+                    return availableDates.size > 0 && !availableDates.has(iso);
+                  }}
                 />
               </PopoverContent>
             </Popover>
