@@ -8,8 +8,6 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/app/components/ui/collapsible";
 import { Button } from "@/app/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/app/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
-import { Calendar as CalendarWidget } from "@/app/components/ui/calendar";
 import { ChevronDown, ChevronUp, Calendar, Info, Activity } from "lucide-react";
 
 const GAUGE_DATA = [
@@ -100,9 +98,123 @@ function CustomTrendTooltip({ active, payload, label }: any) {
   );
 }
 
+function toNYDateString(date: Date): string {
+  return date.toLocaleDateString("en-CA", { timeZone: "America/New_York" }); // returns YYYY-MM-DD
+}
+
 function formatSnapshotDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const d = new Date(dateStr + 'T12:00:00-05:00');
+  return d.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "America/New_York" });
+}
+
+function getScoreColor(score: number): string {
+  if (score >= 100) return "#10B981"; // Risk-On
+  if (score >= 85) return "#14B8A6";  // Constructive
+  if (score >= 70) return "#3B82F6";  // Neutral
+  if (score >= 55) return "#F59E0B";  // Fragile
+  return "#EF4444";                   // Risk-Off
+}
+
+function ThreeMonthCalendar({
+  snapshotScores,
+  selectedDate,
+  onSelectDate,
+}: {
+  snapshotScores: Map<string, number>;
+  selectedDate: Date;
+  onSelectDate: (date: Date) => void;
+}) {
+  // Build 3 months centered on the selected date's month
+  const centerDate = new Date(selectedDate);
+  const months: Date[] = [];
+  for (let offset = -1; offset <= 1; offset++) {
+    const d = new Date(centerDate.getFullYear(), centerDate.getMonth() + offset, 1);
+    months.push(d);
+  }
+
+  const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  function getDaysInMonth(year: number, month: number): number {
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  // Monday=0 based start day
+  function getStartDay(year: number, month: number): number {
+    const day = new Date(year, month, 1).getDay();
+    return day === 0 ? 6 : day - 1;
+  }
+
+  const selectedStr = toNYDateString(selectedDate);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {months.map((monthDate) => {
+        const year = monthDate.getFullYear();
+        const month = monthDate.getMonth();
+        const daysInMonth = getDaysInMonth(year, month);
+        const startDay = getStartDay(year, month);
+        const monthLabel = monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+        const cells: React.ReactNode[] = [];
+        // Empty cells for padding
+        for (let i = 0; i < startDay; i++) {
+          cells.push(<div key={`empty-${i}`} className="h-10" />);
+        }
+        // Day cells
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const score = snapshotScores.get(dateStr);
+          const hasData = score !== undefined;
+          const isSelected = dateStr === selectedStr;
+
+          cells.push(
+            <button
+              key={day}
+              onClick={() => {
+                if (hasData) onSelectDate(new Date(dateStr + "T12:00:00-05:00"));
+              }}
+              disabled={!hasData}
+              className={`
+                h-10 rounded-lg flex flex-col justify-center px-2 text-xs font-mono transition-all
+                ${isSelected
+                  ? "bg-amber-600/30 border border-amber-500/50 ring-1 ring-amber-500/30"
+                  : hasData
+                    ? "hover:bg-[#1E293B] border border-transparent hover:border-[#334155] cursor-pointer"
+                    : "opacity-30 cursor-default border border-transparent"
+                }
+              `}
+            >
+              <span className={`${isSelected ? "text-[12px] text-amber-300 font-semibold" : "text-[#94A3B8]"}`}>
+                {day}
+              </span>
+              {hasData && (
+                <span
+                  className="text-[8px] font-semibold tabular-nums"
+                  style={{ color: getScoreColor(score) }}
+                >
+                  {score}
+                </span>
+              )}
+            </button>
+          );
+        }
+
+        return (
+          <div key={monthLabel}>
+            <h3 className="text-sm font-semibold text-[#F8FAFC] mb-3 text-center">{monthLabel}</h3>
+            <div className="grid grid-cols-7 gap-0.5 mb-1">
+              {WEEKDAYS.map((w) => (
+                <div key={w} className="text-center text-[10px] text-[#94A3B8] font-mono py-1">{w}</div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-0.5">
+              {cells}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function Home() {
@@ -111,15 +223,16 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [snapshotScores, setSnapshotScores] = useState<Map<string, number>>(new Map());
 
-  // Fetch list of available snapshot dates
+  // Fetch list of available snapshot dates with scores
   useEffect(() => {
     fetch("/api/snapshots")
       .then((res) => res.json())
-      .then((list: Array<{ snapshotDate: string }>) => {
-        setAvailableDates(new Set(list.map((s) => s.snapshotDate)));
+      .then((list: Array<{ snapshotDate: string; totalScore: number }>) => {
+        const map = new Map<string, number>();
+        list.forEach((s) => map.set(s.snapshotDate, s.totalScore));
+        setSnapshotScores(map);
       })
       .catch(() => {});
   }, []);
@@ -129,7 +242,7 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     const url = selectedDate
-      ? `/api/dashboard?date=${selectedDate.toISOString().slice(0, 10)}`
+      ? `/api/dashboard?date=${toNYDateString(selectedDate)}`
       : "/api/dashboard";
     fetch(url)
       .then((res) => {
@@ -180,30 +293,10 @@ export default function Home() {
               <span className="text-sm font-semibold tracking-wide text-[#F8FAFC]">VALAR</span>
               <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence</span>
             </div>
-            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-              <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono hover:text-[#F8FAFC] transition-colors px-2 py-1 -mx-2 -my-1 rounded hover:bg-[#1E293B]">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>{formatSnapshotDate(snapshot.snapshotDate)}</span>
-                  <ChevronDown className="h-3 w-3 opacity-50" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-auto p-0 bg-[#111827] border-[#334155]">
-                <CalendarWidget
-                  mode="single"
-                  selected={selectedDate ?? new Date(snapshot.snapshotDate + "T00:00:00")}
-                  onSelect={(date) => {
-                    setSelectedDate(date);
-                    setCalendarOpen(false);
-                  }}
-                  defaultMonth={new Date(snapshot.snapshotDate + "T00:00:00")}
-                  disabled={(date) => {
-                    const iso = date.toISOString().slice(0, 10);
-                    return availableDates.size > 0 && !availableDates.has(iso);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>{formatSnapshotDate(snapshot.snapshotDate)} (New York)</span>
+            </div>
           </div>
         </header>
 
@@ -261,7 +354,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 flex flex-col items-center gap-1">
-                <span className="text-lg font-semibold text-[#F8FAFC]" data-testid="text-snapshot-date">{formatSnapshotDate(snapshot.snapshotDate)}</span>
+                <span className="text-lg font-semibold text-[#F8FAFC]" data-testid="text-snapshot-date">{formatSnapshotDate(snapshot.snapshotDate)} (NY)</span>
                 <span className="text-[11px] text-[#94A3B8] font-mono uppercase tracking-wider">Daily Snapshot</span>
               </div>
             </div>
@@ -303,6 +396,22 @@ export default function Home() {
                     {snapshot.interpretation}
                   </p>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div className="bg-[#111827] border border-[#334155] rounded-xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-[#334155] flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-[#3B82F6]" />
+                <h2 className="text-sm font-semibold text-[#F8FAFC] uppercase tracking-wider">Score Calendar</h2>
+              </div>
+              <div className="p-6">
+                <ThreeMonthCalendar
+                  snapshotScores={snapshotScores}
+                  selectedDate={selectedDate ?? new Date(snapshot.snapshotDate + "T12:00:00-05:00")}
+                  onSelectDate={(date) => setSelectedDate(date)}
+                />
               </div>
             </div>
           </section>

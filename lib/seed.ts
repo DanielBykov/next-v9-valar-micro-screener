@@ -6,6 +6,17 @@ function jitter(base: number, range: number, lo: number, hi: number) {
   return clamp(base + Math.round((Math.random() - 0.5) * 2 * range), lo, hi);
 }
 
+/** Returns today's date as YYYY-MM-DD in New York time */
+function todayNY(): string {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+}
+
+/** Builds a YYYY-MM-DD string anchored to NY timezone for a given year/month/day */
+function nyDateString(year: number, month: number, day: number): string {
+  const d = new Date(Date.UTC(year, month - 1, day, 17, 0, 0)); // noon ET ≈ 17:00 UTC
+  return d.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+}
+
 // ── 28-day macro narrative arc for Feb 2026 ──────────────────────────
 // Scores drift lower mid-month on hawkish Fed + weak data, then partially recover
 const dailyScores: number[] = [
@@ -194,8 +205,7 @@ export async function seedDatabase() {
   if (hasData) return;
 
   for (let day = 1; day <= 28; day++) {
-    const dd = String(day).padStart(2, "0");
-    const dateStr = `2026-02-${dd}`;
+    const dateStr = nyDateString(2026, 2, day);
     const score = dailyScores[day - 1];
     const prev = day > 1 ? dailyScores[day - 2] : score + 1;
     const { regime, subtitle } = regimeFor(score);
