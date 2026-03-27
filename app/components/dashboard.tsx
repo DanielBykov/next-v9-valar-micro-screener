@@ -8,7 +8,8 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/app/components/ui/collapsible";
 import { Button } from "@/app/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/app/components/ui/tooltip";
-import { ChevronDown, ChevronUp, Calendar, Info, Activity } from "lucide-react";
+import { ChevronDown, ChevronUp, Calendar, Info, Activity, Settings } from "lucide-react";
+import Link from "next/link";
 
 const GAUGE_DATA = [
   { name: 'Risk-Off', value: 55, fill: '#EF4444' },
@@ -302,9 +303,17 @@ export default function Home() {
               <span className="text-sm font-semibold tracking-wide text-[#F8FAFC]">VALAR</span>
               <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence</span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>{formatSnapshotDate(snapshot.snapshotDate)} (New York)</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono">
+                <Calendar className="h-3.5 w-3.5" />
+                <span>{formatSnapshotDate(snapshot.snapshotDate)} (New York)</span>
+              </div>
+              <Link href="/admin">
+                <Button variant="ghost" size="sm" className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
+                  <Settings className="h-3.5 w-3.5" />
+                  <span className="text-xs ml-1.5">Admin</span>
+                </Button>
+              </Link>
             </div>
           </div>
         </header>
