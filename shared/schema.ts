@@ -1,4 +1,4 @@
-import { pgTable, text, integer, serial, date } from "drizzle-orm/pg-core";
+import {pgTable, text, integer, serial, date, numeric, timestamp, uniqueIndex} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -58,3 +58,26 @@ export type Metric = typeof metrics.$inferSelect;
 export type InsertMetric = z.infer<typeof insertMetricSchema>;
 export type TrendPoint = typeof trendPoints.$inferSelect;
 export type InsertTrendPoint = z.infer<typeof insertTrendPointSchema>;
+
+export const indicatorObservations = pgTable(
+    "indicator_observations",
+    {
+      id: serial("id").primaryKey(),
+      seriesId: text("series_id").notNull(),
+      observationDate: date("observation_date").notNull(),
+      value: numeric("value", { precision: 20, scale: 6 }).notNull(),
+      source: text("source").notNull(),
+      fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
+    },
+    (t) => [
+      uniqueIndex("indicator_observations_series_date_idx").on(t.seriesId, t.observationDate),
+    ],
+);
+
+export const insertIndicatorObservationSchema = createInsertSchema(indicatorObservations).omit({
+  id: true,
+  fetchedAt: true,
+});
+export type IndicatorObservation = typeof indicatorObservations.$inferSelect;
+export type InsertIndicatorObservation = z.infer<typeof insertIndicatorObservationSchema>;
+
