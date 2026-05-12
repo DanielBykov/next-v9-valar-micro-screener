@@ -4,3 +4,5 @@
 - **Default Space**: Macro Screener (ID: 90166341029)
 - **Workspace ID**: 90161329394
 - Always use the Macro Screener space for all ClickUp operations
+- Users ID:
+  - Daniel = 100890062

@@ -1,0 +1,8 @@
+### Fetch indicators – invalid block (expect 400)
+POST http://localhost:3000/api/admin/fetch-indicators?block=invalid
+
+### Fetch indicators – rates (default 90-day range)
+POST http://localhost:3000/api/admin/fetch-indicators?block=rates
+
+### Fetch indicators – rates with explicit range
+POST http://localhost:3000/api/admin/fetch-indicators?block=rates&start=2026-01-01&end=2026-01-05
