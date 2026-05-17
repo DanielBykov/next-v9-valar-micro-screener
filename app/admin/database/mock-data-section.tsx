@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { Trash2, Loader2 } from "lucide-react";
 
-export function DatabaseSection() {
+export function MockDataSection() {
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
 
   async function handleClearData() {
-    if (!confirm("This will permanently delete ALL data from every table. Continue?")) return;
+    if (!confirm("This will permanently delete ALL mock data from every table. Continue?")) return;
 
     setStatus({ type: "loading" });
     try {
@@ -22,8 +22,8 @@ export function DatabaseSection() {
 
   return (
     <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
-      <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Database</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">Manage stored snapshots, blocks, metrics, and trend data.</p>
+      <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Mock Data</h2>
+      <p className="text-xs text-[#94A3B8] mb-5">Manage mock snapshots, blocks, metrics, and trend data used for development.</p>
 
       <div className="flex items-center gap-4">
         <button
@@ -36,7 +36,7 @@ export function DatabaseSection() {
           ) : (
             <Trash2 className="h-4 w-4" />
           )}
-          Clear all data
+          Clear all mock data
         </button>
 
         {status.type === "success" && (
