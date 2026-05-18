@@ -57,24 +57,22 @@ export function IndicatorsTable() {
       <div className="grid gap-4 mb-5">
         <div className="flex flex-wrap items-end gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs text-[#94A3B8] font-mono block">From (YYYY-MM-DD)</label>
+            <label className="text-xs text-[#94A3B8] font-mono block">From</label>
             <input
-              type="text"
+              type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              placeholder="2024-01-01"
-              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:border-[#475569] min-w-[160px]"
+              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] focus:outline-none focus:border-[#475569] min-w-[160px] [color-scheme:dark]"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs text-[#94A3B8] font-mono block">To (YYYY-MM-DD)</label>
+            <label className="text-xs text-[#94A3B8] font-mono block">To</label>
             <input
-              type="text"
+              type="date"
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              placeholder="2024-12-31"
-              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:border-[#475569] min-w-[160px]"
+              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] focus:outline-none focus:border-[#475569] min-w-[160px] [color-scheme:dark]"
             />
           </div>
 
