@@ -1,4 +1,4 @@
-import { CoverageTable } from "./coverage-table";
+import { CoverageTable } from "../_components/coverage-table";
 import { IndicatorsTable } from "./indicators-table";
 
 export default function IndicatorsPage() {
