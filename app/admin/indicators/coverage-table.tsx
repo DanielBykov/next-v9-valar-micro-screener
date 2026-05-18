@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { SERIES_BY_BLOCK } from "@/lib/fred/series-catalog";
 
 type CoverageRow = { seriesId: string; month: string; count: number };
@@ -9,6 +9,7 @@ type CoverageRow = { seriesId: string; month: string; count: number };
 const ALL_SERIES: string[] = Array.from(new Set(Object.values(SERIES_BY_BLOCK).flat()));
 
 export function CoverageTable() {
+  const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<"loading" | "error" | "done">("loading");
   const [error, setError] = useState("");
   const [months, setMonths] = useState<string[]>([]);
@@ -42,12 +43,24 @@ export function CoverageTable() {
   }, []);
 
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
-      <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Data Coverage</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">
-        Observation counts per series per month.
-      </p>
+    <section className="bg-[#111827] border border-[#334155] rounded-xl">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between p-6 cursor-pointer"
+      >
+        <div className="text-left">
+          <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Data Coverage</h2>
+          <p className="text-xs text-[#94A3B8]">
+            Observation counts per series per month.
+          </p>
+        </div>
+        <ChevronDown
+          className={`h-4 w-4 text-[#94A3B8] transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
 
+      {!open ? null : (
+      <div className="px-6 pb-6">
       {status === "loading" && (
         <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
           <Loader2 className="h-4 w-4 animate-spin" /> Loading coverage…
@@ -105,6 +118,8 @@ export function CoverageTable() {
             </table>
           </div>
         </div>
+      )}
+      </div>
       )}
     </section>
   );
