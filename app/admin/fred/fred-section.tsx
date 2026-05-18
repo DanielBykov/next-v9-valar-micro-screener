@@ -21,7 +21,7 @@ type FetchResult = {
   results: SeriesResult[];
 };
 
-export function FredSection() {
+export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
@@ -46,6 +46,7 @@ export function FredSection() {
         type: "success",
         message: `${data.totalStored} observations stored · ${ok} series ok${fail ? ` · ${fail} failed` : ""}`,
       });
+      onFetchComplete?.();
     } catch (err: any) {
       setStatus({ type: "error", message: err.message || "Unknown error" });
     }
@@ -74,7 +75,7 @@ export function FredSection() {
         <button
           onClick={handleFetchIndicators}
           disabled={status.type === "loading"}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {status.type === "loading" ? (
             <Loader2 className="h-4 w-4 animate-spin" />

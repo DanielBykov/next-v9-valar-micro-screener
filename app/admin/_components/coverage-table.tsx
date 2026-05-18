@@ -9,7 +9,7 @@ type CoverageRow = { seriesId: string; month: string; count: number };
 const ALL_SERIES: string[] = Array.from(new Set(Object.values(SERIES_BY_BLOCK).flat()));
 
 export function CoverageTable() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [status, setStatus] = useState<"loading" | "error" | "done">("loading");
   const [error, setError] = useState("");
   const [months, setMonths] = useState<string[]>([]);
