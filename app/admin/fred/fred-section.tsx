@@ -6,42 +6,59 @@ import { format } from "date-fns";
 import { Calendar } from "@/app/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
 
-type FredObservation = {
-  date: string;
-  value: string;
+type SeriesResult = {
+  seriesId: string;
+  status: "ok" | "error";
+  count: number;
+  error?: string;
+};
+
+type FetchResult = {
+  block: string;
+  start: string;
+  end: string;
+  totalStored: number;
+  results: SeriesResult[];
 };
 
 export function FredSection() {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [fredStatus, setFredStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
-  const [observations, setObservations] = useState<FredObservation[]>([]);
+  const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
+  const [result, setResult] = useState<FetchResult | null>(null);
 
-  async function handleFetchFedFunds() {
-    if (!startDate || !endDate) return;
-
-    setFredStatus({ type: "loading" });
-    setObservations([]);
+  async function handleFetchIndicators() {
+    setStatus({ type: "loading" });
+    setResult(null);
     try {
-      const start = format(startDate, "yyyy-MM-dd");
-      const end = format(endDate, "yyyy-MM-dd");
-      const res = await fetch(`/api/admin/fred?series=DFF&start=${start}&end=${end}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      const obs: FredObservation[] = (data.observations || []).filter(
-        (o: FredObservation) => o.value !== "."
-      );
-      setObservations(obs);
-      setFredStatus({ type: "success", message: `${obs.length} observations returned` });
+      const params = new URLSearchParams({ block: "rates" });
+      if (startDate) params.set("start", format(startDate, "yyyy-MM-dd"));
+      if (endDate) params.set("end", format(endDate, "yyyy-MM-dd"));
+
+      const res = await fetch(`/api/admin/fetch-indicators?${params}`, { method: "POST" });
+      const data: FetchResult = await res.json();
+      if (!res.ok) throw new Error((data as any).message || "Fetch failed");
+
+      setResult(data);
+      const ok = data.results.filter((r) => r.status === "ok").length;
+      const fail = data.results.filter((r) => r.status === "error").length;
+      setStatus({
+        type: "success",
+        message: `${data.totalStored} observations stored · ${ok} series ok${fail ? ` · ${fail} failed` : ""}`,
+      });
     } catch (err: any) {
-      setFredStatus({ type: "error", message: err.message || "Unknown error" });
+      setStatus({ type: "error", message: err.message || "Unknown error" });
     }
   }
 
   return (
     <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
-      <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">FRED API</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">Fetch Federal Reserve economic data. Series: DFF (Federal Funds Rate).</p>
+      <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Fetch Indicators</h2>
+      <p className="text-xs text-[#94A3B8] mb-5">
+        Fetch FRED series for the <span className="text-amber-400 font-medium">rates</span> block
+        (DFF, T10Y2Y, WALCL, DGS10, T10YIE, DFEDTARU) and save to database.
+        Dates are optional — defaults to last 90 days.
+      </p>
 
       <div className="flex flex-wrap items-end gap-4 mb-5">
         <div className="space-y-1.5">
@@ -55,51 +72,56 @@ export function FredSection() {
         </div>
 
         <button
-          onClick={handleFetchFedFunds}
-          disabled={!startDate || !endDate || fredStatus.type === "loading"}
+          onClick={handleFetchIndicators}
+          disabled={status.type === "loading"}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {fredStatus.type === "loading" ? (
+          {status.type === "loading" ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Download className="h-4 w-4" />
           )}
-          FRED API test — Fed Funds
+          Fetch &amp; Store Rates
         </button>
       </div>
 
-      {fredStatus.type === "success" && (
-        <span className="text-xs text-emerald-400 font-mono block mb-3">{fredStatus.message}</span>
+      {status.type === "success" && (
+        <span className="text-xs text-emerald-400 font-mono block mb-3">{status.message}</span>
       )}
-      {fredStatus.type === "error" && (
-        <span className="text-xs text-red-400 font-mono block mb-3">{fredStatus.message}</span>
+      {status.type === "error" && (
+        <span className="text-xs text-red-400 font-mono block mb-3">{status.message}</span>
       )}
 
-      {observations.length > 0 && (
+      {result && (
         <div className="border border-[#334155] rounded-lg overflow-hidden">
-          <div className="max-h-[300%] overflow-y-auto">
-            <table className="w-full text-xs font-mono">
-              <thead className="bg-[#1E293B] sticky top-0">
-                <tr>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">#</th>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Date</th>
-                  <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">Rate (%)</th>
+          <table className="w-full text-xs font-mono">
+            <thead className="bg-[#1E293B]">
+              <tr>
+                <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Series</th>
+                <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Status</th>
+                <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">Rows stored</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.results.map((r) => (
+                <tr key={r.seriesId} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
+                  <td className="px-4 py-1.5 text-[#F8FAFC]">{r.seriesId}</td>
+                  <td className={`px-4 py-1.5 ${r.status === "ok" ? "text-emerald-400" : "text-red-400"}`}>
+                    {r.status === "ok" ? "ok" : r.error ?? "error"}
+                  </td>
+                  <td className="px-4 py-1.5 text-right text-amber-400">{r.count}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {observations.map((obs, i) => {
-                  const changed = i > 0 && obs.value !== observations[i - 1].value;
-                  return (
-                    <tr key={obs.date} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                      <td className={`px-4 py-1.5 ${changed ? "text-red-400" : "text-[#64748B]"}`}>{i + 1}</td>
-                      <td className={`px-4 py-1.5 ${changed ? "text-red-400" : "text-[#F8FAFC]"}`}>{obs.date}</td>
-                      <td className={`px-4 py-1.5 text-right ${changed ? "text-red-400" : "text-amber-400"}`}>{obs.value}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+            <tfoot className="bg-[#1E293B]">
+              <tr>
+                <td className="px-4 py-2 text-[#94A3B8] font-medium" colSpan={2}>
+                  {result.start} → {result.end}
+                </td>
+                <td className="px-4 py-2 text-right text-amber-400 font-medium">{result.totalStored} total</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       )}
     </section>
