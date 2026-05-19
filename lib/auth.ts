@@ -48,3 +48,25 @@ export async function verifySessionToken(token: string | undefined, secret: stri
 
 export const SESSION_COOKIE_NAME = SESSION_COOKIE;
 export const SESSION_MAX_AGE_SECONDS = Math.floor(SESSION_TTL_MS / 1000);
+
+/**
+ * Check session cookie from a Request. Returns null if authenticated,
+ * or a 401 NextResponse if not. Usage:
+ *   const denied = await requireAuth(request);
+ *   if (denied) return denied;
+ */
+export async function requireAuth(req: Request): Promise<Response | null> {
+  const { NextResponse } = await import("next/server");
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret) {
+    return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+  }
+  const cookie = req.headers.get("cookie") ?? "";
+  const match = cookie.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE}=([^;]+)`));
+  const token = match?.[1];
+  const valid = await verifySessionToken(token, secret);
+  if (!valid) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return null;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { SERIES_BY_BLOCK } from "@/lib/fred/series-catalog";
 
@@ -13,12 +13,32 @@ type Row = {
 
 const ALL_SERIES: string[] = Array.from(new Set(Object.values(SERIES_BY_BLOCK).flat()));
 
-export function IndicatorsTable() {
+export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [selectedSeries, setSelectedSeries] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
   const [rows, setRows] = useState<Row[]>([]);
+  const [groupByDate, setGroupByDate] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const pendingFetch = useRef(false);
+
+  useEffect(() => {
+    if (!filterMonth) return;
+    const [y, m] = filterMonth.split("-").map(Number);
+    setFrom(`${filterMonth}-01`);
+    setTo(`${y}-${String(m).padStart(2, "0")}-${new Date(y, m, 0).getDate()}`);
+    setSelectedSeries(new Set());
+    pendingFetch.current = true;
+  }, [filterMonth]);
+
+  useEffect(() => {
+    if (!pendingFetch.current || !from || !to) return;
+    pendingFetch.current = false;
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    handleFetch();
+  }, [from, to]);
 
   function toggleSeries(sid: string) {
     setSelectedSeries((prev) => {
@@ -36,7 +56,6 @@ export function IndicatorsTable() {
       const params = new URLSearchParams();
       if (from) params.set("from", from);
       if (to) params.set("to", to);
-      if (selectedSeries.size > 0) params.set("series", Array.from(selectedSeries).join(","));
 
       const res = await fetch(`/api/admin/indicators?${params.toString()}`);
       const data = await res.json();
@@ -49,8 +68,10 @@ export function IndicatorsTable() {
     }
   }
 
+  const filteredRows = selectedSeries.size > 0 ? rows.filter((r) => selectedSeries.has(r.seriesId)) : rows;
+
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+    <section ref={sectionRef} className="bg-[#111827] border border-[#334155] rounded-xl p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Indicators</h2>
       <p className="text-xs text-[#94A3B8] mb-5">Query stored observations from the <span className="font-mono">indicator_observations</span> table.</p>
 
@@ -88,68 +109,102 @@ export function IndicatorsTable() {
             )}
             Fetch
           </button>
+
+          {status.type === "success" && (
+            <span className="text-xs text-emerald-400 font-mono ml-auto self-center">{status.message}</span>
+          )}
+          {status.type === "error" && (
+            <span className="text-xs text-red-400 font-mono ml-auto self-center">{status.message}</span>
+          )}
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-xs text-[#94A3B8] font-mono block">
-            Series ({selectedSeries.size === 0 ? "all" : `${selectedSeries.size} selected`})
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {ALL_SERIES.map((sid) => {
-              const checked = selectedSeries.has(sid);
-              return (
-                <label
-                  key={sid}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-mono cursor-pointer transition-colors ${
-                    checked
-                      ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
-                      : "border-[#334155] bg-[#0F172A] text-[#94A3B8] hover:border-[#475569]"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => toggleSeries(sid)}
-                    className="h-3 w-3 accent-amber-500"
-                  />
-                  {sid}
-                </label>
-              );
-            })}
+        <div className="flex items-start gap-4">
+          <div className="space-y-1.5 flex-1">
+            <label className="text-xs text-[#94A3B8] font-mono block">
+              Series ({selectedSeries.size === 0 ? "all" : `${selectedSeries.size} selected`})
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {ALL_SERIES.map((sid) => {
+                const checked = selectedSeries.has(sid);
+                return (
+                  <label
+                    key={sid}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-mono cursor-pointer transition-colors ${
+                      checked
+                        ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                        : "border-[#334155] bg-[#0F172A] text-[#94A3B8] hover:border-[#475569]"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleSeries(sid)}
+                      className="h-3 w-3 accent-amber-500"
+                    />
+                    {sid}
+                  </label>
+                );
+              })}
+            </div>
           </div>
+
+          <label className="flex items-center gap-2 cursor-pointer shrink-0 mt-5">
+            <input
+              type="checkbox"
+              checked={groupByDate}
+              onChange={(e) => setGroupByDate(e.target.checked)}
+              className="h-3 w-3 accent-amber-500"
+            />
+            <span className="text-xs text-[#94A3B8] font-mono">Group by date</span>
+          </label>
         </div>
       </div>
 
-      {status.type === "success" && (
-        <span className="text-xs text-emerald-400 font-mono block mb-3">{status.message}</span>
-      )}
-      {status.type === "error" && (
-        <span className="text-xs text-red-400 font-mono block mb-3">{status.message}</span>
-      )}
-
-      {rows.length > 0 && (
+      {filteredRows.length > 0 && (
         <div className="border border-[#334155] rounded-lg overflow-hidden">
-          <div className="max-h-[500px] overflow-y-auto">
-            <table className="w-full text-xs font-mono">
-              <thead className="bg-[#1E293B] sticky top-0">
-                <tr>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">id</th>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">series_id</th>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">observation_date</th>
-                  <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                    <td className="px-4 py-1.5 text-[#64748B]">{r.id}</td>
-                    <td className="px-4 py-1.5 text-[#F8FAFC]">{r.seriesId}</td>
-                    <td className="px-4 py-1.5 text-[#F8FAFC]">{r.observationDate}</td>
-                    <td className="px-4 py-1.5 text-right text-amber-400">{r.value}</td>
+          <div className="max-h-[650px] overflow-y-auto">
+              <table className="w-full text-xs font-mono">
+                <thead className="bg-[#1E293B] sticky top-0">
+                  <tr>
+                    {!groupByDate && <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">observation_date</th>}
+                    <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">series_id</th>
+                    <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">value</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {groupByDate
+                    ? (() => {
+                        const grouped = filteredRows.reduce<Record<string, Row[]>>((acc, r) => {
+                          (acc[r.observationDate] ??= []).push(r);
+                          return acc;
+                        }, {});
+                        return Object.keys(grouped).sort().map((date) => (
+                          <>
+                            <tr key={`hdr-${date}`} className="bg-[#1E293B]/70">
+                              <td colSpan={2} className="px-4 py-2 text-[#94A3B8] font-semibold">
+                                {date}
+                                <span className="ml-2 text-[#64748B] font-normal">({grouped[date].length})</span>
+                              </td>
+                            </tr>
+                            {grouped[date].map((r) => (
+                              <tr key={r.id} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
+                                <td className="px-4 py-1.5 pl-8 text-[#F8FAFC]">{r.seriesId}</td>
+                                <td className="px-4 py-1.5 text-right text-amber-400">{Number(r.value).toFixed(2)}</td>
+                              </tr>
+                            ))}
+                          </>
+                        ));
+                      })()
+                    : filteredRows.map((r) => (
+                        <tr key={r.id} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
+                          <td className="px-4 py-1.5 text-[#F8FAFC]">{r.observationDate}</td>
+                          <td className="px-4 py-1.5 text-[#F8FAFC]">{r.seriesId}</td>
+                          <td className="px-4 py-1.5 text-right text-amber-400">{Number(r.value).toFixed(2)}</td>
+                        </tr>
+                      ))
+                  }
+                </tbody>
+              </table>
           </div>
         </div>
       )}

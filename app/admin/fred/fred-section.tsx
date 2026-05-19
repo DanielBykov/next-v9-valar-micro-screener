@@ -5,6 +5,7 @@ import { CalendarIcon, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/app/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { useAdminAuth } from "../_components/admin-auth-context";
 
 type SeriesResult = {
   seriesId: string;
@@ -22,6 +23,7 @@ type FetchResult = {
 };
 
 export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
+  const isAuthed = useAdminAuth();
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
@@ -61,36 +63,42 @@ export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void 
         Dates are optional — defaults to last 90 days.
       </p>
 
-      <div className="flex flex-wrap items-end gap-4 mb-5">
-        <div className="space-y-1.5">
-          <label className="text-xs text-[#94A3B8] font-mono">Start date</label>
-          <DatePicker date={startDate} onSelect={setStartDate} placeholder="Pick start" />
-        </div>
+      {isAuthed ? (
+        <>
+          <div className="flex flex-wrap items-end gap-4 mb-5">
+            <div className="space-y-1.5">
+              <label className="text-xs text-[#94A3B8] font-mono">Start date</label>
+              <DatePicker date={startDate} onSelect={setStartDate} placeholder="Pick start" />
+            </div>
 
-        <div className="space-y-1.5">
-          <label className="text-xs text-[#94A3B8] font-mono">End date</label>
-          <DatePicker date={endDate} onSelect={setEndDate} placeholder="Pick end" />
-        </div>
+            <div className="space-y-1.5">
+              <label className="text-xs text-[#94A3B8] font-mono">End date</label>
+              <DatePicker date={endDate} onSelect={setEndDate} placeholder="Pick end" />
+            </div>
 
-        <button
-          onClick={handleFetchIndicators}
-          disabled={status.type === "loading"}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-        >
-          {status.type === "loading" ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Download className="h-4 w-4" />
+            <button
+              onClick={handleFetchIndicators}
+              disabled={status.type === "loading"}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {status.type === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Fetch &amp; Store Rates
+            </button>
+          </div>
+
+          {status.type === "success" && (
+            <span className="text-xs text-emerald-400 font-mono block mb-3">{status.message}</span>
           )}
-          Fetch &amp; Store Rates
-        </button>
-      </div>
-
-      {status.type === "success" && (
-        <span className="text-xs text-emerald-400 font-mono block mb-3">{status.message}</span>
-      )}
-      {status.type === "error" && (
-        <span className="text-xs text-red-400 font-mono block mb-3">{status.message}</span>
+          {status.type === "error" && (
+            <span className="text-xs text-red-400 font-mono block mb-3">{status.message}</span>
+          )}
+        </>
+      ) : (
+        <p className="text-xs text-[#64748B] italic mb-5">Login required to fetch indicators.</p>
       )}
 
       {result && (

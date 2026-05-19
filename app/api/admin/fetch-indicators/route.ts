@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAndStoreBlock } from "@/lib/fred/fetcher";
 import { isBlockKey } from "@/lib/fred/series-catalog";
+import { requireAuth } from "@/lib/auth";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function POST(request: NextRequest) {
+  const denied = await requireAuth(request);
+  if (denied) return denied;
+
   if (!process.env.FRED_API) {
     return NextResponse.json({ message: "FRED_API env var is not set" }, { status: 500 });
   }

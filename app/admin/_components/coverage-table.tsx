@@ -8,7 +8,7 @@ type CoverageRow = { seriesId: string; month: string; count: number };
 
 const ALL_SERIES: string[] = Array.from(new Set(Object.values(SERIES_BY_BLOCK).flat()));
 
-export function CoverageTable() {
+export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string) => void }) {
   const [open, setOpen] = useState(true);
   const [status, setStatus] = useState<"loading" | "error" | "done">("loading");
   const [error, setError] = useState("");
@@ -94,7 +94,10 @@ export function CoverageTable() {
               <tbody>
                 {months.map((month) => (
                   <tr key={month} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                    <td className="px-4 py-1.5 text-[#F8FAFC] sticky left-0 bg-[#111827]">
+                    <td
+                      className={`px-4 py-1.5 text-[#F8FAFC] sticky left-0 bg-[#111827]${onMonthClick ? " cursor-pointer hover:text-amber-400 transition-colors" : ""}`}
+                      onClick={() => onMonthClick?.(month)}
+                    >
                       {month}
                     </td>
                     {ALL_SERIES.map((sid) => {
