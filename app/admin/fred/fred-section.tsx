@@ -23,7 +23,7 @@ type FetchResult = {
 };
 
 export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
-  const isAuthed = useAdminAuth();
+  const { isAuthed, promptLogin } = useAdminAuth();
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
@@ -98,7 +98,12 @@ export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void 
           )}
         </>
       ) : (
-        <p className="text-xs text-[#64748B] italic mb-5">Login required to fetch indicators.</p>
+        <p className="text-xs text-[#64748B] italic mb-5">
+          <button type="button" onClick={promptLogin} className="underline hover:text-[#94A3B8] transition-colors cursor-pointer">
+            Login
+          </button>
+          {" "}required to fetch indicators.
+        </p>
       )}
 
       {result && (

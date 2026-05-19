@@ -1,31 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 
+// Sensitive write endpoints that require authentication.
+// Admin pages and read-only API routes are public.
+const PROTECTED_API_ROUTES = ["/api/admin/clear", "/api/admin/fetch-indicators"];
+
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/api/admin/:path*"],
 };
 
 export async function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  const isProtected = PROTECTED_API_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
+  );
+  if (!isProtected) return NextResponse.next();
+
   const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) {
-    return new NextResponse("Server misconfiguration: ADMIN_SESSION_SECRET not set", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: "Server not configured" }), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
   }
 
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const isAuthed = await verifySessionToken(token, secret);
   if (isAuthed) return NextResponse.next();
 
-  const { pathname } = req.nextUrl;
-
-  if (pathname.startsWith("/api/")) {
-    return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const loginUrl = req.nextUrl.clone();
-  loginUrl.pathname = "/login";
-  loginUrl.searchParams.set("next", pathname);
-  return NextResponse.redirect(loginUrl);
+  return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+    status: 401,
+    headers: { "content-type": "application/json" },
+  });
 }

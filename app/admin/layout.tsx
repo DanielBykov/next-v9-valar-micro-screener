@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Sidebar } from "./_components/sidebar";
-import { LogoutButton } from "./_components/logout-button";
+import { AuthButton } from "./_components/login-button";
 import { AdminAuthProvider } from "./_components/admin-auth-context";
 import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 
@@ -22,11 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </Link>
             <span className="text-sm font-semibold tracking-wide">VALAR</span>
             <span className="text-xs text-[#94A3B8] font-mono">Admin</span>
-            {isAuthed ? <LogoutButton /> : (
-              <Link href="/login?next=/admin" className="ml-auto text-xs text-[#94A3B8] hover:text-[#F8FAFC] transition-colors">
-                Login
-              </Link>
-            )}
+            <AuthButton />
           </div>
         </header>
 

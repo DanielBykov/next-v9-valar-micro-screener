@@ -5,7 +5,7 @@ import { Trash2, Loader2 } from "lucide-react";
 import { useAdminAuth } from "../_components/admin-auth-context";
 
 export function MockDataSection() {
-  const isAuthed = useAdminAuth();
+  const { isAuthed, promptLogin } = useAdminAuth();
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
 
   async function handleClearData() {
@@ -50,7 +50,12 @@ export function MockDataSection() {
           )}
         </div>
       ) : (
-        <p className="text-xs text-[#64748B] italic">Login required to manage mock data.</p>
+        <p className="text-xs text-[#64748B] italic">
+          <button type="button" onClick={promptLogin} className="underline hover:text-[#94A3B8] transition-colors cursor-pointer">
+            Login
+          </button>
+          {" "}required to manage mock data.
+        </p>
       )}
     </section>
   );
