@@ -26,3 +26,21 @@
 - **Admin: split into pages with sidebar + new Indicators page**
   Admin area split into separate routes with a left sidebar (Overview, Database, FRED, Indicators). "Database" page renamed to Mock Data. New Indicators page queries `indicator_observations` with date range and series filters, renders results in a table. New API: `GET /api/admin/indicators`.
   Ticket: [86d30xmxy](https://app.clickup.com/t/86d30xmxy) | Status: review
+
+- **Docs: reorganize and add Dashboard Dev documentation**
+  Reorganized the documentation structure and added comprehensive Dashboard Dev docs.
+
+- **Auth: add session token utilities**
+  Built session token utilities for user authentication.
+
+## May 18, 2026
+- **Auth: admin route protection and login improvements**
+  Added middleware to protect admin routes so only authenticated users can access `/admin`. Improved login flow — extracted the login form into a Suspense-wrapped component, simplified redirect logic, and fixed date input handling. Updated route type import path.
+
+## May 19, 2026
+- **Admin: Data Coverage table and FRED data fetching**
+  Added a Data Coverage table showing observation counts by series and month, with collapsible rows. Enhanced FRED API section so the admin can fetch and store indicator data, with auto-refresh after fetching. Cleaned up by removing unused `CoverageTable` component and relocating its logic. Removed unused `middleware.ts` file.
+
+## May 20, 2026
+- **Admin: dashboard cards, month filtering, and auth UI**
+  Added summary cards to the admin page (data coverage stats, fetch status, latest snapshot). Introduced month filtering for data views. Added login dialog and auth buttons directly on admin pages. Added FRED data management documentation. Added app icon (`icon.svg` with styled "M" logo).
