@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarIcon, Download, Loader2 } from "lucide-react";
-import { format } from "date-fns";
-import { Calendar } from "@/app/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Download, Loader2 } from "lucide-react";
 import { useAdminAuth } from "../_components/admin-auth-context";
 
 type SeriesResult = {
@@ -24,8 +21,8 @@ type FetchResult = {
 
 export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
   const { isAuthed, promptLogin } = useAdminAuth();
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
   const [result, setResult] = useState<FetchResult | null>(null);
 
@@ -34,8 +31,8 @@ export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void 
     setResult(null);
     try {
       const params = new URLSearchParams({ block: "rates" });
-      if (startDate) params.set("start", format(startDate, "yyyy-MM-dd"));
-      if (endDate) params.set("end", format(endDate, "yyyy-MM-dd"));
+      if (startDate) params.set("start", startDate);
+      if (endDate) params.set("end", endDate);
 
       const res = await fetch(`/api/admin/fetch-indicators?${params}`, { method: "POST" });
       const data: FetchResult = await res.json();
@@ -68,12 +65,22 @@ export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void 
           <div className="flex flex-wrap items-end gap-4 mb-5">
             <div className="space-y-1.5">
               <label className="text-xs text-[#94A3B8] font-mono">Start date</label>
-              <DatePicker date={startDate} onSelect={setStartDate} placeholder="Pick start" />
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+              />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs text-[#94A3B8] font-mono">End date</label>
-              <DatePicker date={endDate} onSelect={setEndDate} placeholder="Pick end" />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+              />
             </div>
 
             <button
@@ -139,30 +146,5 @@ export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void 
         </div>
       )}
     </section>
-  );
-}
-
-function DatePicker({ date, onSelect, placeholder }: { date?: Date; onSelect: (d: Date | undefined) => void; placeholder: string }) {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button className="flex items-center gap-2 px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] hover:border-[#475569] transition-colors min-w-[160px] text-left">
-          <CalendarIcon className="h-3.5 w-3.5 text-[#64748B]" />
-          {date ? (
-            <span className="text-[#F8FAFC]">{format(date, "yyyy-MM-dd")}</span>
-          ) : (
-            <span className="text-[#64748B]">{placeholder}</span>
-          )}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-[#111827] border-[#334155]" align="start">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={onSelect}
-          defaultMonth={date || new Date()}
-        />
-      </PopoverContent>
-    </Popover>
   );
 }
