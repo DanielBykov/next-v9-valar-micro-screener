@@ -1,7 +1,18 @@
+"use client";
+
+import { useState } from "react";
+import { DataCoverageCard } from "./_components/data-coverage-card";
+import { FetchStatusCard } from "./_components/fetch-status-card";
+import { LatestSnapshotCard } from "./_components/latest-snapshot-card";
+
 export default function AdminPage() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
   return (
-    <div className="text-xs text-[#94A3B8] font-mono">
-      Overview — pick a section from the sidebar.
+    <div className="space-y-6">
+      <LatestSnapshotCard />
+      <DataCoverageCard key={`cov-${refreshKey}`} />
+      <FetchStatusCard onFetchComplete={() => setRefreshKey((k) => k + 1)} />
     </div>
   );
 }
