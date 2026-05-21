@@ -44,3 +44,23 @@
 ## May 20, 2026
 - **Admin: dashboard cards, month filtering, and auth UI**
   Added summary cards to the admin page (data coverage stats, fetch status, latest snapshot). Introduced month filtering for data views. Added login dialog and auth buttons directly on admin pages. Added FRED data management documentation. Added app icon (`icon.svg` with styled "M" logo).
+
+## May 21, 2026
+- **Docs: Scoring Engine design and implementation plan**
+  Wrote comprehensive design document (`Block1_T3-7--Scoring_Engine_plan.md`) covering the architecture, type system, computation flow, registry structure, API surface, and admin page layout for the Scoring Engine. Covers Tasks 3–7 and defines the roadmap for scalable block-based scoring.
+
+- **Scoring Engine: core framework and block registry**
+  Built the Scoring Engine core from scratch — `SnapshotEngine` (top-level orchestrator, sums block scores into a 0–120 total and resolves a regime), `BlockEngine` (runs every scorer in a block, averages indicator scores, resolves block-level regime), `IndicatorScorer` abstract base class (declares identity, documentation, inputs, 1–5 bands, and a pure `compute()`), and `observations-repo` (loads observation data from DB grouped by series). Defined the full type system (`Score`, `ScoreBand`, `ScoringResult`, `BlockResult`, `SnapshotResult`, `BlockDefinition`, etc.) and registered the initial Rates & Central Bank Policy block in the registry.
+
+- **Scoring Engine: five indicator scorers for Rates & CB Policy block**
+  Implemented all five auto-scored indicators: `FedFundsRateLevelScorer` (current fed funds rate level), `YieldCurveScorer` (2Y/10Y spread inversion detection), `QePolicyScorer` (QE vs QT via Fed balance sheet changes), `RealInterestRateScorer` (nominal rate minus breakeven inflation), and `LastRateChangeScorer` (direction and magnitude of the most recent rate move). Each scorer includes full documentation, scoring bands, formula traces, and example test cases. Integrated into the Rates block definition with a five-tier regime map (Very Restrictive → Very Accommodative).
+
+## May 22, 2026
+- **API: engine metadata, live computation, and trend endpoints**
+  Three new admin API routes: `GET /api/admin/engine/metadata` (serves the full scoring registry — block definitions, scorer docs, bands, examples — pure metadata, no DB), `GET /api/admin/engine/live?date=YYYY-MM-DD` (runs `SnapshotEngine` for a given date and returns the raw untransformed result with every block, indicator, inputsUsed, and formulaTrace), and `GET /api/admin/engine/trend?indicator=KEY&days=N` (historical score series for a single indicator — one point per day, batch-loaded observations in a single DB query, linear cost).
+
+- **Admin: Scoring Engine documentation and visualization page**
+  New `/admin/engine` page — server-renders registry metadata and a live snapshot for today. Client shell adds: collapsible block sidebar, block summary with regime label, indicator cards showing live score/raw value/band, inputs table, scoring bands table, formula display, examples table, interactive "Try It" panel for experimenting with custom inputs, and sparkline charts powered by the `/trend` endpoint. Extended admin sidebar navigation with Engine section.
+
+- **Refactor: IndicatorSparkline, BlockSidebar, and performance**
+  Refactored `IndicatorSparkline` to use a single state pattern (loading → error → idle) replacing scattered state flags. Made the admin sidebar collapsible. Enhanced `BlockSidebar` with planned block placeholders (Liquidity, Growth & Employment, Inflation, Risk Sentiment, External) for a visible roadmap. Optimized the trend endpoint with `loadObservationsForBlockOverRange` — batch-loads all observations for the full date window in one DB query, then `BlockEngine.scoreBlockRange` iterates in memory instead of N separate queries.
