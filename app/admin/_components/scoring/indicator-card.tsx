@@ -1,0 +1,98 @@
+"use client";
+
+import type { ApiScorer, ApiScoringResult } from "./types";
+import { FormulaBlock } from "./formula-block";
+import { ScoringBandsTable } from "./scoring-bands-table";
+import { InputsTable } from "./inputs-table";
+import { ExamplesTable } from "./examples-table";
+import { IndicatorSparkline } from "./indicator-sparkline";
+import { TryItPanel } from "./try-it-panel";
+
+type Props = {
+  scorer: ApiScorer;
+  liveResult: ApiScoringResult | null;
+};
+
+function scoreBadgeClasses(score: number) {
+  if (score >= 4) return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+  if (score === 3) return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+  if (score === 2) return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+  return "bg-red-500/10 text-red-400 border-red-500/20";
+}
+
+export function IndicatorCard({ scorer, liveResult }: Props) {
+  const initialValues = liveResult?.inputsUsed
+    ? Object.fromEntries(liveResult.inputsUsed.map((u) => [u.seriesId, Number(u.value)]))
+    : undefined;
+
+  return (
+    <section
+      id={`indicator-${scorer.key}`}
+      className="bg-[#111827] border border-[#334155] rounded-xl p-6 space-y-5"
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-sm font-semibold text-[#F8FAFC]">{scorer.name}</h3>
+          <p className="text-[11px] font-mono text-[#64748B] mt-0.5">
+            {scorer.key} · unit {scorer.unit}
+          </p>
+        </div>
+        {liveResult ? (
+          <div className="flex items-center gap-2">
+            <span
+              className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded border ${scoreBadgeClasses(liveResult.score)}`}
+            >
+              {liveResult.score} · {liveResult.bandLabel}
+            </span>
+            {liveResult.rawValue != null && (
+              <span className="text-[11px] font-mono text-[#94A3B8]">
+                raw {liveResult.rawValue.toFixed(2)}{scorer.unit === "%" ? "%" : ""}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="text-[11px] font-mono text-[#64748B]">no live data</span>
+        )}
+      </div>
+
+      {/* Description */}
+      <p className="text-xs text-[#cbd5e1] leading-relaxed">{scorer.description}</p>
+
+      {/* Live warning */}
+      {liveResult?.warning && (
+        <p className="text-[11px] font-mono text-amber-400">⚠ {liveResult.warning}</p>
+      )}
+
+      {/* Formula */}
+      <FormulaBlock
+        formulaPretty={scorer.formulaPretty}
+        trace={liveResult ? liveResult.formulaTrace : null}
+      />
+
+      {/* Inputs */}
+      <div className="space-y-1">
+        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Inputs</div>
+        <InputsTable inputs={scorer.inputs} inputsUsed={liveResult?.inputsUsed ?? []} />
+      </div>
+
+      {/* Bands */}
+      <div className="space-y-1">
+        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Bands</div>
+        <ScoringBandsTable bands={scorer.bands} currentScore={liveResult?.score ?? null} />
+      </div>
+
+      {/* Examples */}
+      <div className="space-y-1">
+        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Examples</div>
+        <ExamplesTable examples={scorer.examples} />
+      </div>
+
+      {/* Sparkline */}
+      <IndicatorSparkline indicatorKey={scorer.key} />
+
+      {/* Try it */}
+      <TryItPanel scorer={scorer} initialValues={initialValues} />
+    </section>
+  );
+}

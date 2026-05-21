@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Database, LineChart, Activity } from "lucide-react";
+import { LayoutDashboard, Database, LineChart, Activity, Gauge } from "lucide-react";
 
 type NavItem = {
   href: string;
@@ -15,6 +15,7 @@ const NAV: NavItem[] = [
   { href: "/admin/database", label: "Database", icon: Database },
   { href: "/admin/fred", label: "FRED", icon: LineChart },
   { href: "/admin/indicators", label: "Indicators", icon: Activity },
+  { href: "/admin/engine", label: "Engine", icon: Gauge },
 ];
 
 export function Sidebar() {
