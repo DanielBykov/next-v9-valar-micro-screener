@@ -1,3 +1,8 @@
+import { FedFundsRateLevelScorer } from "@/lib/scoring/blocks/rates/fed-funds-rate";
+import { LastRateChangeScorer } from "@/lib/scoring/blocks/rates/last-rate-change";
+import { QePolicyScorer } from "@/lib/scoring/blocks/rates/qe-qt-policy";
+import { RealInterestRateScorer } from "@/lib/scoring/blocks/rates/real-interest-rate";
+import { YieldCurveScorer } from "@/lib/scoring/blocks/rates/yield-curve";
 import type { BlockDefinition, BlockRegimeMapping } from "@/lib/scoring/types";
 
 /**
@@ -57,7 +62,13 @@ export const ratesBlock: BlockDefinition = {
   key: "rates",
   name: "Rates & Central Bank Policy",
   sortOrder: 0,
-  scorers: [],
+  scorers: [
+    new FedFundsRateLevelScorer(),
+    new LastRateChangeScorer(),
+    new YieldCurveScorer(),
+    new QePolicyScorer(),
+    new RealInterestRateScorer(),
+  ],
   regimeMap: REGIME_MAP,
   regimeFor,
 };
