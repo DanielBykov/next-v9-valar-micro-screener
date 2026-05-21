@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="flex">
           <Sidebar />
           <main className="flex-1 px-6 py-10">
-            <div className="max-w-4xl mx-auto space-y-8">{children}</div>
+            <div className="max-w-7xl mx-auto space-y-8">{children}</div>
           </main>
         </div>
       </div>

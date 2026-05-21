@@ -9,9 +9,9 @@ type Props = {
 
 export function BlockSummary({ block, liveBlock }: Props) {
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+    <section className="bg-[#0B1120] border border-[#475569] rounded-xl p-6">
       <div className="flex items-baseline gap-3 mb-1">
-        <h2 className="text-sm font-semibold uppercase tracking-wider">{block.name}</h2>
+        <h2 className="text-base font-semibold tracking-wide text-[#F8FAFC]">{block.name}</h2>
         {liveBlock && (
           <span className="text-[10px] font-mono text-[#94A3B8]">
             avg {liveBlock.blockAverage.toFixed(2)} · score {liveBlock.blockScore}/20 ·{" "}

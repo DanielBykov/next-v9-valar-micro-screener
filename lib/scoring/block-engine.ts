@@ -1,4 +1,9 @@
-import type { BlockDefinition, BlockResult, ScoringInput } from "@/lib/scoring/types";
+import type {
+  BlockDefinition,
+  BlockResult,
+  ObservationsByseries,
+  ScoringInput,
+} from "@/lib/scoring/types";
 import { blockAverageToScore, toIsoDate } from "@/lib/scoring/helpers";
 import { loadObservationsForBlock } from "@/lib/scoring/observations-repo";
 
@@ -38,5 +43,32 @@ export class BlockEngine {
       blockScore,
       regimeLabel: this.def.regimeFor(blockAverage),
     };
+  }
+
+  /**
+   * Score the block across many dates using a single pre-loaded observations
+   * payload covering the entire window.
+   *
+   * For each date we slice the DESC-sorted observation arrays to entries
+   * with date <= asOfDate, then delegate to `scoreBlockWith`. Pure and
+   * in-memory; no DB I/O. Powers the trend endpoint.
+   *
+   * Assumes `full` is DESC-sorted by observation_date (as returned by
+   * `loadObservationsForBlockOverRange`).
+   */
+  scoreBlockRange(dates: Date[], full: ObservationsByseries): BlockResult[] {
+    const seriesIds = Object.keys(full);
+    return dates.map((asOfDate) => {
+      const isoAsOf = toIsoDate(asOfDate);
+      const filtered: ObservationsByseries = {};
+      for (const seriesId of seriesIds) {
+        const series = full[seriesId];
+        // DESC-sorted: walk forward until we land on entries <= asOfDate.
+        let i = 0;
+        while (i < series.length && series[i].observationDate > isoAsOf) i++;
+        filtered[seriesId] = i === 0 ? series : series.slice(i);
+      }
+      return this.scoreBlockWith(asOfDate, { asOfDate, observations: filtered });
+    });
   }
 }

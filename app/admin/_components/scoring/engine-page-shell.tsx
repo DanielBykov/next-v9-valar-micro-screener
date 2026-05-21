@@ -59,33 +59,29 @@ export function EnginePageShell({ metadata, live, liveError }: Props) {
         )}
       </header>
 
-      <div className="flex gap-6">
-        <BlockSidebar
-          blocks={metadata.blocks}
-          selectedBlockKey={selectedBlockKey}
-          onSelectBlock={setSelectedBlockKey}
-          liveBlocks={live?.blocks ?? []}
-        />
+      <BlockSidebar
+        blocks={metadata.blocks}
+        selectedBlockKey={selectedBlockKey}
+        onSelectBlock={setSelectedBlockKey}
+        liveBlocks={live?.blocks ?? []}
+      />
 
-        <div className="flex-1 min-w-0 space-y-6">
-          {selectedBlock ? (
-            <>
-              <BlockSummary block={selectedBlock} liveBlock={liveBlock} />
-              <div className="space-y-6">
-                {selectedBlock.scorers.map((scorer) => (
-                  <IndicatorCard
-                    key={scorer.key}
-                    scorer={scorer}
-                    liveResult={liveByIndicator.get(scorer.key) ?? null}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            <p className="text-xs text-[#64748B] italic">No blocks registered.</p>
-          )}
-        </div>
-      </div>
+      {selectedBlock ? (
+        <>
+          <BlockSummary block={selectedBlock} liveBlock={liveBlock} />
+          <div className="space-y-6">
+            {selectedBlock.scorers.map((scorer) => (
+              <IndicatorCard
+                key={scorer.key}
+                scorer={scorer}
+                liveResult={liveByIndicator.get(scorer.key) ?? null}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <p className="text-xs text-[#64748B] italic">No blocks registered.</p>
+      )}
     </div>
   );
 }

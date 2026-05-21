@@ -55,3 +55,60 @@ export async function loadObservationsForBlock(
   }
   return grouped;
 }
+
+/**
+ * Load every observation a block could need to score any date in
+ * [fromDate, toDate]. Extends the lower bound by the block's largest
+ * lookbackDays so even the earliest date has its full history.
+ *
+ * Returns observations grouped by series_id and DESC-sorted by date —
+ * the same shape `BlockEngine.scoreBlockWith` expects. Callers are
+ * responsible for slicing per-date subsets (see `BlockEngine.scoreBlockRange`).
+ *
+ * Used by the trend endpoint to replace N per-date queries with one.
+ */
+export async function loadObservationsForBlockOverRange(
+  def: BlockDefinition,
+  fromDate: Date,
+  toDate: Date,
+): Promise<ObservationsByseries> {
+  const maxLookbackBySeries = new Map<string, number>();
+  for (const scorer of def.scorers) {
+    for (const spec of scorer.inputs) {
+      const prev = maxLookbackBySeries.get(spec.seriesId) ?? 0;
+      if (spec.lookbackDays > prev) {
+        maxLookbackBySeries.set(spec.seriesId, spec.lookbackDays);
+      }
+    }
+  }
+
+  if (maxLookbackBySeries.size === 0) {
+    return {};
+  }
+
+  const seriesIds = Array.from(maxLookbackBySeries.keys());
+  const maxLookback = Math.max(...Array.from(maxLookbackBySeries.values()));
+  const startDate = toIsoDate(daysAgo(fromDate, maxLookback));
+  const endDate = toIsoDate(toDate);
+
+  const rows = await db
+    .select()
+    .from(indicatorObservations)
+    .where(
+      and(
+        inArray(indicatorObservations.seriesId, seriesIds),
+        gte(indicatorObservations.observationDate, startDate),
+        lte(indicatorObservations.observationDate, endDate),
+      ),
+    )
+    .orderBy(desc(indicatorObservations.observationDate));
+
+  const grouped: ObservationsByseries = {};
+  for (const seriesId of seriesIds) {
+    grouped[seriesId] = [];
+  }
+  for (const row of rows) {
+    (grouped[row.seriesId] ??= []).push(row);
+  }
+  return grouped;
+}

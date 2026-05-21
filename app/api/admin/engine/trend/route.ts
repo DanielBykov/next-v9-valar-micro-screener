@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BlockEngine } from "@/lib/scoring/block-engine";
 import { daysAgo, toIsoDate } from "@/lib/scoring/helpers";
+import { loadObservationsForBlockOverRange } from "@/lib/scoring/observations-repo";
 import { getBlockByKey, getScorerByKey } from "@/lib/scoring/registry";
 
 const MIN_DAYS = 1;
@@ -15,6 +16,8 @@ const DEFAULT_DAYS = 400;
  * computed score and the raw value at that date.
  *
  * Only the block that owns the indicator is computed — not the full snapshot.
+ * Observations for the entire window are loaded in a single DB query, then
+ * iterated in memory, so N=days has linear cost with one round-trip.
  */
 export async function GET(request: NextRequest) {
   const indicatorKey = request.nextUrl.searchParams.get("indicator");
@@ -62,8 +65,13 @@ export async function GET(request: NextRequest) {
       dates.push(daysAgo(today, i));
     }
 
+    const observations = await loadObservationsForBlockOverRange(
+      block,
+      dates[0],
+      dates[dates.length - 1],
+    );
     const engine = new BlockEngine(block);
-    const blockResults = await Promise.all(dates.map((d) => engine.scoreBlock(d)));
+    const blockResults = engine.scoreBlockRange(dates, observations);
 
     const points = blockResults.map((br) => {
       const indicator = br.indicators.find((i) => i.indicatorKey === indicatorKey);

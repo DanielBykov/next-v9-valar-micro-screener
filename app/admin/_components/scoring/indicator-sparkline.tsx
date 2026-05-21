@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { ApiTrend } from "./types";
 
@@ -14,50 +14,82 @@ type Props = {
   days?: number;
 };
 
-export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props) {
-  const [data, setData] = useState<ApiTrend | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type State =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "error"; message: string }
+  | { kind: "loaded"; data: ApiTrend };
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
+export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props) {
+  const [state, setState] = useState<State>({ kind: "idle" });
+
+  const load = () => {
+    setState({ kind: "loading" });
     fetch(`/api/admin/engine/trend?indicator=${encodeURIComponent(indicatorKey)}&days=${days}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Trend request failed (${r.status})`);
         return r.json();
       })
-      .then((json: ApiTrend) => {
-        if (!cancelled) setData(json);
-      })
-      .catch((err: Error) => {
-        if (!cancelled) setError(err.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [indicatorKey, days]);
+      .then((data: ApiTrend) => setState({ kind: "loaded", data }))
+      .catch((err: Error) => setState({ kind: "error", message: err.message }));
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center gap-2 text-[11px] text-[#64748B]">
-        <Loader2 className="h-3 w-3 animate-spin" /> Loading trend…
+  return (
+    <div className="space-y-1">
+      <div className="flex items-baseline justify-between gap-2">
+        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">
+          Score history · {days}d
+        </div>
+        {state.kind === "loaded" && (
+          <div className="text-[10px] font-mono text-[#94A3B8]">
+            {state.data.from} → {state.data.to}
+          </div>
+        )}
       </div>
-    );
-  }
-  if (error) {
-    return <p className="text-[11px] text-red-400 font-mono">{error}</p>;
-  }
-  if (!data || data.points.length === 0) {
+
+      {state.kind === "idle" && (
+        <button
+          type="button"
+          onClick={load}
+          className="bg-[#1E293B] hover:bg-[#334155] border border-[#334155] text-[#cbd5e1] hover:text-[#F8FAFC] text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+        >
+          Load trend
+        </button>
+      )}
+
+      {state.kind === "loading" && (
+        <div className="flex items-center gap-2 text-[11px] text-[#64748B]">
+          <Loader2 className="h-3 w-3 animate-spin" /> Loading trend…
+        </div>
+      )}
+
+      {state.kind === "error" && (
+        <div className="flex items-center gap-2">
+          <p className="text-[11px] text-red-400 font-mono">{state.message}</p>
+          <button
+            type="button"
+            onClick={load}
+            className="text-[11px] text-[#94A3B8] hover:text-[#F8FAFC] underline underline-offset-2"
+          >
+            retry
+          </button>
+        </div>
+      )}
+
+      {state.kind === "loaded" && <SparklineSvg data={state.data} />}
+    </div>
+  );
+}
+
+function SparklineSvg({ data }: { data: ApiTrend }) {
+  const points = data.points;
+  if (points.length === 0) {
     return <p className="text-[11px] text-[#64748B] italic">No trend data.</p>;
   }
 
-  const points = data.points;
-  const xs = points.map((_, i) => PAD + (i / Math.max(1, points.length - 1)) * (WIDTH - 2 * PAD));
+  const xs = points.map(
+    (_, i) => PAD + (i / Math.max(1, points.length - 1)) * (WIDTH - 2 * PAD),
+  );
   const ys = points.map((p) => {
     if (p.score == null) return null;
     // score: 1 (bottom) → 5 (top)
@@ -81,15 +113,7 @@ export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props)
   const last = points[points.length - 1];
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-baseline justify-between">
-        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">
-          Score history · {data.days}d
-        </div>
-        <div className="text-[10px] font-mono text-[#94A3B8]">
-          {data.from} → {data.to}
-        </div>
-      </div>
+    <>
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="w-full h-14 block bg-[#0F172A] border border-[#334155] rounded-md"
@@ -116,6 +140,6 @@ export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props)
       <div className="text-[10px] font-mono text-[#64748B]">
         latest {last.date} · score {last.score ?? "—"} ({last.bandLabel ?? "—"})
       </div>
-    </div>
+    </>
   );
 }

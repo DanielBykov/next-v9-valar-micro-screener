@@ -77,7 +77,7 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
 
       {status === "done" && months.length > 0 && (
         <div className="border border-[#334155] rounded-lg overflow-hidden">
-          <div className="max-h-[500px] overflow-auto">
+          <div className="max-h-80 overflow-auto">
             <table className="w-full text-xs font-mono">
               <thead className="bg-[#1E293B] sticky top-0 z-10">
                 <tr>
