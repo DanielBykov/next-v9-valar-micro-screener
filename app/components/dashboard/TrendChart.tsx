@@ -1,0 +1,70 @@
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceArea,
+} from "recharts";
+import { getRegimeForScore } from "./utils";
+import type { DashboardData } from "./types";
+
+function CustomTrendTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  const score = payload[0].value;
+  const regime = getRegimeForScore(score);
+  return (
+    <div className="bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-3 shadow-xl">
+      <p className="text-xs text-[#94A3B8] mb-1 font-mono">{label}</p>
+      <p className="text-lg font-semibold text-[#F8FAFC] font-mono">{score}</p>
+      <p className="text-xs text-[#94A3B8] mt-1">{regime}</p>
+    </div>
+  );
+}
+
+export function TrendChart({ trendData }: { trendData: DashboardData["trend"] }) {
+  return (
+    <div className="bg-[#111827] border border-[#334155] rounded-xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-[#334155] flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-[#F8FAFC] uppercase tracking-wider">Macro Pulse Trend — 12 Months</h3>
+        <span className="text-[10px] font-mono text-[#94A3B8]">Feb 2025 — Feb 2026</span>
+      </div>
+      <div className="p-6">
+        <div className="h-[320px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+
+              <ReferenceArea y1={55} y2={69} fill="#F59E0B" fillOpacity={0.03} />
+              <ReferenceArea y1={70} y2={84} fill="#3B82F6" fillOpacity={0.04} />
+              <ReferenceArea y1={85} y2={99} fill="#14B8A6" fillOpacity={0.03} />
+              <ReferenceArea y1={100} y2={120} fill="#10B981" fillOpacity={0.03} />
+
+              <XAxis
+                dataKey="month"
+                stroke="#94A3B8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                dy={10}
+                fontFamily="JetBrains Mono"
+              />
+              <YAxis
+                domain={[60, 100]}
+                stroke="#94A3B8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                fontFamily="JetBrains Mono"
+              />
+              <RechartsTooltip content={<CustomTrendTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="score"
+                stroke="#3B82F6"
+                strokeWidth={2}
+                dot={{ r: 3, fill: '#0F172A', strokeWidth: 2, stroke: '#3B82F6' }}
+                activeDot={{ r: 5, fill: '#3B82F6', stroke: '#0F172A', strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}
