@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react";
+import { Activity, Settings } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import Link from "next/link";
 import { ScoreCalendar } from "./ScoreCalendar";
@@ -27,6 +27,12 @@ export function Header({
             selectedDate={selectedDate}
             onSelectDate={onSelectDate}
           />
+          <Link href="/mock-dashboard">
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
+              <Activity className="h-3.5 w-3.5" />
+              <span className="text-xs ml-1.5">Mock Data</span>
+            </Button>
+          </Link>
           <Link href="/admin">
             <Button variant="ghost" size="sm" className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
               <Settings className="h-3.5 w-3.5" />
