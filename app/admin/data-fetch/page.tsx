@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { CoverageTable } from "../_components/coverage-table";
-import { FredSection } from "./fred-section";
+import { DataFetchSection } from "./data-fetch-section";
 
-export default function FredPage() {
+export default function DataFetchPage() {
   const [coverageKey, setCoverageKey] = useState(0);
 
   return (
     <div className="space-y-6">
       <CoverageTable key={coverageKey} />
-      <FredSection onFetchComplete={() => setCoverageKey((k) => k + 1)} />
+      <DataFetchSection onFetchComplete={() => setCoverageKey((k) => k + 1)} />
     </div>
   );
 }

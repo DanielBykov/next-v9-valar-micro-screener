@@ -14,7 +14,7 @@ type NavItem = {
 const NAV: NavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/database", label: "Database", icon: Database },
-  { href: "/admin/fred", label: "FRED", icon: LineChart },
+  { href: "/admin/data-fetch", label: "Data Fetch", icon: LineChart },
   { href: "/admin/indicators", label: "Indicators", icon: Activity },
   { href: "/admin/engine", label: "Engine", icon: Gauge },
 ];

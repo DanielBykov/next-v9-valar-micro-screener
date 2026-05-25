@@ -19,7 +19,7 @@ type FetchResult = {
   results: SeriesResult[];
 };
 
-export function FredSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
+export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
   const { isAuthed, promptLogin } = useAdminAuth();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");

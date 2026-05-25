@@ -40,7 +40,7 @@ export function LatestSnapshotCard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/dashboard")
+    fetch("/api/mock-dashboard")
       .then((r) => {
         if (!r.ok) throw new Error("No snapshot data");
         return r.json();
