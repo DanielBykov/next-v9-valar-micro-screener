@@ -248,7 +248,7 @@ export default function Home() {
 
     // Fetch list of available snapshot dates with scores
     useEffect(() => {
-        fetch("/api/snapshots")
+        fetch("/api/mock-snapshots")
             .then((res) => res.json())
             .then((list: Array<{ snapshotDate: string; totalScore: number }>) => {
                 const map = new Map<string, number>();
@@ -322,7 +322,7 @@ export default function Home() {
                         <div className="flex items-center gap-3">
                             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"/>
                             <span className="text-sm font-semibold tracking-wide text-[#F8FAFC]">VALAR</span>
-                            <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence</span>
+                            <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence (mock data)</span>
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono">
@@ -333,13 +333,6 @@ export default function Home() {
                                 <Button variant="ghost" size="sm"
                                         className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
                                     <span className="text-xs">Real Data</span>
-                                </Button>
-                            </Link>
-                            <Link href="/mock-dashboard">
-                                <Button variant="ghost" size="sm"
-                                        className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
-                                    <Activity className="h-3.5 w-3.5"/>
-                                    <span className="text-xs ml-1.5">Mock</span>
                                 </Button>
                             </Link>
                             <Link href="/admin">
