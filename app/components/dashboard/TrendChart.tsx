@@ -18,6 +18,22 @@ function CustomTrendTooltip({ active, payload, label }: any) {
 }
 
 export function TrendChart({ trendData }: { trendData: DashboardData["trend"] }) {
+  if (!trendData || trendData.length === 0) {
+    return (
+      <div className="bg-[#111827] border border-dashed border-[#334155] rounded-xl overflow-hidden opacity-70">
+        <div className="px-6 py-4 border-b border-[#334155] flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-[#94A3B8] uppercase tracking-wider">Macro Pulse Trend — 12 Months</h3>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#475569] text-[#94A3B8] bg-[#0F172A]/60">
+            Planned
+          </span>
+        </div>
+        <div className="p-6 h-[320px] flex items-center justify-center">
+          <p className="text-xs text-[#94A3B8] italic">Trend will activate once historical scoring lands.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#111827] border border-[#334155] rounded-xl overflow-hidden">
       <div className="px-6 py-4 border-b border-[#334155] flex items-center justify-between">

@@ -1,6 +1,16 @@
 import { Activity } from "lucide-react";
 import type { DashboardData } from "./types";
 
+function fmt(value: number | null): string {
+  return value === null ? "—" : String(value);
+}
+
+function fmtDelta(value: number | null): string {
+  if (value === null) return "—";
+  if (value === 0) return "0";
+  return value > 0 ? `+${value}` : String(value);
+}
+
 export function SnapshotStats({ snapshot }: { snapshot: DashboardData["snapshot"] }) {
   const deltaYoY = snapshot.oneYearAgoScore ? snapshot.totalScore - snapshot.oneYearAgoScore : null;
 
@@ -15,24 +25,24 @@ export function SnapshotStats({ snapshot }: { snapshot: DashboardData["snapshot"
         <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#334155]">
           <div className="px-6 py-5 flex justify-between items-center">
             <span className="text-sm text-[#94A3B8]">Daily Change</span>
-            <span className="font-mono text-xl font-semibold text-[#F8FAFC]" data-testid="text-vs-yesterday">{snapshot.vsYesterday}</span>
+            <span className="font-mono text-xl font-semibold text-[#F8FAFC]" data-testid="text-vs-yesterday">{fmtDelta(snapshot.vsYesterday)}</span>
           </div>
           <div className="px-6 py-5 flex justify-between items-center">
             <span className="text-sm text-[#94A3B8]">vs 3M Avg</span>
-            <span className="font-mono text-xl font-semibold text-[#F59E0B]" data-testid="text-vs-3m">{snapshot.vs3mAvg}</span>
+            <span className="font-mono text-xl font-semibold text-[#F59E0B]" data-testid="text-vs-3m">{fmt(snapshot.vs3mAvg)}</span>
           </div>
         </div>
         <div className="border-t border-[#334155] grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#334155]">
           <div className="px-6 py-5 flex justify-between items-center">
             <span className="text-sm text-[#94A3B8]">vs 1Y Avg</span>
-            <span className="font-mono text-xl font-semibold text-[#EF4444]" data-testid="text-vs-1y">{snapshot.vs1yAvg}</span>
+            <span className="font-mono text-xl font-semibold text-[#EF4444]" data-testid="text-vs-1y">{fmt(snapshot.vs1yAvg)}</span>
           </div>
           <div className="px-6 py-5 flex justify-between items-center">
             <div className="flex flex-col">
               <span className="text-sm text-[#94A3B8]">1Y Ago</span>
               {deltaYoY !== null && <span className="text-xs text-[#94A3B8] font-mono mt-0.5">{deltaYoY > 0 ? "+" : ""}{deltaYoY} YoY</span>}
             </div>
-            <span className="font-mono text-xl font-semibold text-[#F8FAFC]" data-testid="text-1y-ago">{snapshot.oneYearAgoScore}</span>
+            <span className="font-mono text-xl font-semibold text-[#F8FAFC]" data-testid="text-1y-ago">{fmt(snapshot.oneYearAgoScore)}</span>
           </div>
         </div>
 

@@ -7,6 +7,25 @@ type Block = DashboardData["blocks"][number];
 export function DomainBlockCard({ block, index }: { block: Block; index: number }) {
   const signal = getBlockSignal(block.score);
 
+  if (block.isPlanned) {
+    return (
+      <div
+        className="bg-[#1E293B]/40 border border-dashed border-[#334155] rounded-xl overflow-hidden opacity-70"
+        data-testid={`card-block-${index}`}
+      >
+        <div className="px-5 py-4 border-b border-[#334155]/50 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-[#94A3B8]">{block.name}</h3>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#475569] text-[#94A3B8] bg-[#0F172A]/60">
+            Planned
+          </span>
+        </div>
+        <div className="px-5 py-10 flex items-center justify-center">
+          <p className="text-xs text-[#94A3B8] italic">{block.summary}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`bg-[#1E293B] border ${signal.borderColor} rounded-xl ${signal.glowClass} overflow-hidden`}

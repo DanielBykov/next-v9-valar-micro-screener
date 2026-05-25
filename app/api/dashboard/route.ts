@@ -1,59 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { storage } from "@/lib/storage";
-import { seedDatabase } from "@/lib/seed";
+import { SnapshotEngine } from "@/lib/scoring/snapshot-engine";
+import { BLOCKS } from "@/lib/scoring/registry";
+import { toDashboardData } from "@/lib/scoring/dashboard-adapter";
 
-let seeded = false;
+/**
+ * Parse a YYYY-MM-DD param into a Date anchored to noon NY time (so toIsoDate
+ * always lands on the intended calendar day regardless of server timezone).
+ */
+function parseAsOfDate(dateParam: string | null): Date {
+  if (!dateParam) return new Date();
+  // noon ET ≈ 17:00 UTC — safe across DST
+  return new Date(`${dateParam}T17:00:00Z`);
+}
 
 export async function GET(request: NextRequest) {
   try {
-    if (!seeded) {
-      await seedDatabase();
-      seeded = true;
-    }
-
-    const snapshotIdParam = request.nextUrl.searchParams.get("snapshotId");
     const dateParam = request.nextUrl.searchParams.get("date");
+    const asOf = parseAsOfDate(dateParam);
+    const yesterday = new Date(asOf);
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
 
-    let snapshot;
-    if (dateParam) {
-      snapshot = await storage.getSnapshotByDate(dateParam);
-    } else if (snapshotIdParam) {
-      const id = Number(snapshotIdParam);
-      if (Number.isNaN(id)) {
-        return NextResponse.json({ message: "Invalid snapshotId." }, { status: 400 });
-      }
-      snapshot = await storage.getSnapshotById(id);
-    } else {
-      snapshot = await storage.getLatestSnapshot();
-    }
+    const engine = new SnapshotEngine(BLOCKS);
+    const [snapshot, yesterdaySnapshot] = await Promise.all([
+      engine.compute(asOf),
+      engine.compute(yesterday).catch(() => null),
+    ]);
 
-    if (!snapshot) {
-      return NextResponse.json({ message: "No snapshot data found." }, { status: 404 });
-    }
-
-    const blocksData = await storage.getBlocksBySnapshot(snapshot.id);
-
-    const blocksWithMetrics = await Promise.all(
-      blocksData.map(async (block) => {
-        const blockMetrics = await storage.getMetricsByBlock(block.id);
-        const drivers = blockMetrics.filter((m) => m.isTopDriver === 1);
-        return {
-          ...block,
-          metrics: blockMetrics,
-          drivers: drivers.map((d) => ({ name: d.name, score: d.score })),
-        };
-      })
-    );
-
-    const allMetrics = await storage.getAllMetricsBySnapshot(snapshot.id);
-    const trend = await storage.getTrendBySnapshot(snapshot.id);
-
-    return NextResponse.json({
-      snapshot,
-      blocks: blocksWithMetrics,
-      metrics: allMetrics,
-      trend,
-    });
+    const data = toDashboardData(snapshot, { yesterday: yesterdaySnapshot });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Dashboard API error:", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });

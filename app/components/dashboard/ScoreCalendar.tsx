@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Activity, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/app/components/ui/popover";
 import { toNYDateString, getScoreColor, formatSnapshotDate } from "./utils";
@@ -19,10 +19,12 @@ function getStartDay(year: number, month: number): number {
 
 export function ScoreCalendar({
   snapshotScores,
+  isLoading = false,
   selectedDate,
   onSelectDate,
 }: {
   snapshotScores: Map<string, number>;
+  isLoading?: boolean;
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
 }) {
@@ -97,7 +99,11 @@ export function ScoreCalendar({
           variant="ghost"
           className="h-auto px-3 py-1.5 text-xs text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] font-mono gap-2 cursor-pointer"
         >
-          <Calendar className="h-3.5 w-3.5" />
+          {isLoading ? (
+            <Activity className="h-3.5 w-3.5 animate-pulse text-[#3B82F6]" />
+          ) : (
+            <Calendar className="h-3.5 w-3.5" />
+          )}
           <span>{formatSnapshotDate(toNYDateString(selectedDate))} (NY)</span>
         </Button>
       </PopoverTrigger>
@@ -126,6 +132,12 @@ export function ScoreCalendar({
         <div className="grid grid-cols-7 gap-0.5">
           {cells}
         </div>
+        {isLoading && (
+          <div className="mt-3 pt-3 border-t border-[#334155] flex items-center gap-2 text-[10px] text-[#94A3B8] font-mono">
+            <Activity className="h-3 w-3 animate-pulse text-[#3B82F6]" />
+            <span>Loading available dates…</span>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

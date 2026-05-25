@@ -264,8 +264,8 @@ export default function Home() {
         setIsLoading(true);
         setError(null);
         const url = selectedDate
-            ? `/api/dashboard?date=${toNYDateString(selectedDate)}`
-            : "/api/dashboard";
+            ? `/api/mock-dashboard?date=${toNYDateString(selectedDate)}`
+            : "/api/mock-dashboard";
         fetch(url)
             .then((res) => {
                 if (!res.ok) throw new Error("No data for this date");

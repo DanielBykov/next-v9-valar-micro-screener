@@ -27,6 +27,7 @@ export interface DashboardData {
       interpretation: string;
       isTopDriver: number;
     }>;
+    isPlanned?: boolean;
   }>;
   metrics: Array<{
     id: number;

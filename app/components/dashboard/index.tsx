@@ -19,8 +19,10 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [snapshotScores, setSnapshotScores] = useState<Map<string, number>>(new Map());
+  const [isCalendarLoading, setIsCalendarLoading] = useState(true);
 
   useEffect(() => {
+    setIsCalendarLoading(true);
     fetch("/api/snapshots")
         .then((res) => res.json())
         .then((list: Array<{ snapshotDate: string; totalScore: number }>) => {
@@ -29,7 +31,8 @@ export default function Home() {
           setSnapshotScores(map);
         })
         .catch(() => {
-        });
+        })
+        .finally(() => setIsCalendarLoading(false));
   }, []);
 
   useEffect(() => {
@@ -90,6 +93,7 @@ export default function Home() {
           <Header
               snapshotDate={snapshot.snapshotDate}
               snapshotScores={snapshotScores}
+              isCalendarLoading={isCalendarLoading}
               selectedDate={selectedDate ?? new Date(snapshot.snapshotDate + "T12:00:00-05:00")}
               onSelectDate={(date: SetStateAction<Date | undefined>) => setSelectedDate(date)}
         />
