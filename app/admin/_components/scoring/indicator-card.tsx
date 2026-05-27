@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Pencil } from "lucide-react";
 import type { ApiScorer, ApiScoringResult } from "./types";
 import { FormulaBlock } from "./formula-block";
 import { ScoringBandsTable } from "./scoring-bands-table";
@@ -25,6 +27,8 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
     ? Object.fromEntries(liveResult.inputsUsed.map((u) => [u.seriesId, Number(u.value)]))
     : undefined;
 
+  const hasManualInput = scorer.inputs.some((i) => i.source === "manual");
+
   return (
     <section
       id={`indicator-${scorer.key}`}
@@ -33,7 +37,22 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-sm font-semibold text-[#F8FAFC]">{scorer.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[#F8FAFC]">{scorer.name}</h3>
+            <span className="text-[10px] font-mono text-amber-400 border border-amber-500/20 bg-amber-500/10 rounded px-1.5 py-0.5">
+              weight {scorer.weight}%
+            </span>
+            {hasManualInput && (
+              <Link
+                href="/admin/manual-inputs"
+                className="inline-flex items-center gap-1 text-[10px] font-mono text-blue-400 border border-blue-500/20 bg-blue-500/10 rounded px-1.5 py-0.5 hover:bg-blue-500/20 transition-colors"
+                title="This indicator requires a manual analyst entry"
+              >
+                <Pencil className="h-3 w-3" />
+                manual input
+              </Link>
+            )}
+          </div>
           <p className="text-[11px] font-mono text-[#64748B] mt-0.5">
             {scorer.key} · unit {scorer.unit}
           </p>

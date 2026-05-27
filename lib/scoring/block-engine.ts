@@ -25,19 +25,37 @@ export class BlockEngine {
   /**
    * Variant that accepts a pre-loaded ScoringInput. Used by SnapshotEngine
    * when computing many dates in parallel against the same observations cache.
+   *
+   * blockAverage is the weighted average of indicator scores using each
+   * scorer's `weight` (percent within block). If the weight sum is zero
+   * (mis-configured block) we fall back to an unweighted mean to avoid NaN.
    */
   scoreBlockWith(asOfDate: Date, input: ScoringInput): BlockResult {
     const indicators = this.def.scorers.map((scorer) => scorer.compute(input));
 
-    const blockAverage = indicators.length
-      ? indicators.reduce((sum, r) => sum + r.score, 0) / indicators.length
-      : 0;
+    let blockAverage = 0;
+    if (indicators.length > 0) {
+      let weightSum = 0;
+      let weightedScoreSum = 0;
+      for (let i = 0; i < indicators.length; i++) {
+        const w = this.def.scorers[i].weight;
+        weightSum += w;
+        weightedScoreSum += w * indicators[i].score;
+      }
+      if (weightSum > 0) {
+        blockAverage = weightedScoreSum / weightSum;
+      } else {
+        blockAverage =
+          indicators.reduce((sum, r) => sum + r.score, 0) / indicators.length;
+      }
+    }
     const blockScore = blockAverageToScore(blockAverage);
 
     return {
       blockKey: this.def.key,
       blockName: this.def.name,
       asOfDate: toIsoDate(asOfDate),
+      blockWeight: this.def.weight,
       indicators,
       blockAverage,
       blockScore,

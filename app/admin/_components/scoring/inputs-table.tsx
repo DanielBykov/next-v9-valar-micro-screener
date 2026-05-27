@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Pencil } from "lucide-react";
 import type { ApiScoringInputUsed, ApiSeriesInput } from "./types";
 
 type Props = {
@@ -18,6 +18,7 @@ export function InputsTable({ inputs, inputsUsed }: Props) {
       <thead className="text-[#64748B]">
         <tr className="border-b border-[#1E293B]">
           <th className="text-left py-1.5 pr-3">Series</th>
+          <th className="text-left py-1.5 pr-3">Source</th>
           <th className="text-left py-1.5 pr-3">Lookback</th>
           <th className="text-left py-1.5 pr-3">Required</th>
           <th className="text-left py-1.5 pr-3">Latest date</th>
@@ -27,19 +28,31 @@ export function InputsTable({ inputs, inputsUsed }: Props) {
       <tbody>
         {inputs.map((spec) => {
           const used = usedByseries.get(spec.seriesId);
+          const isManual = spec.source === "manual";
           return (
             <tr key={spec.seriesId} className="border-b border-[#1E293B]">
               <td className="py-1.5 pr-3">
-                <a
-                  href={FRED_URL(spec.seriesId)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[#cbd5e1] hover:text-[#F8FAFC] inline-flex items-center gap-1"
-                >
-                  {spec.seriesId}
-                  <ExternalLink className="h-3 w-3" />
-                </a>
+                {isManual ? (
+                  <a
+                    href="/admin/manual-inputs"
+                    className="text-[#cbd5e1] hover:text-[#F8FAFC] inline-flex items-center gap-1"
+                  >
+                    {spec.seriesId}
+                    <Pencil className="h-3 w-3" />
+                  </a>
+                ) : (
+                  <a
+                    href={FRED_URL(spec.seriesId)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#cbd5e1] hover:text-[#F8FAFC] inline-flex items-center gap-1"
+                  >
+                    {spec.seriesId}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
               </td>
+              <td className="py-1.5 pr-3 text-[#94A3B8]">{spec.source}</td>
               <td className="py-1.5 pr-3 text-[#94A3B8]">{spec.lookbackDays}d</td>
               <td className="py-1.5 pr-3 text-[#94A3B8]">{spec.required ? "yes" : "no"}</td>
               <td className="py-1.5 pr-3 text-[#94A3B8]">{used?.date ?? "—"}</td>

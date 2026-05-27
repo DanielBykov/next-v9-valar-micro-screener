@@ -19,18 +19,34 @@ type FetchResult = {
   results: SeriesResult[];
 };
 
+const BLOCK_OPTIONS: { key: string; label: string; seriesPreview: string }[] = [
+  {
+    key: "rates",
+    label: "Rates & CB Policy",
+    seriesPreview: "DFF, T10Y2Y, WALCL, DGS10, T10YIE, DFEDTARU",
+  },
+  {
+    key: "inflation_labor",
+    label: "Inflation & Labor",
+    seriesPreview: "CPIAUCSL, CPILFESL, UNRATE, PAYEMS, CES0500000003, CIVPART",
+  },
+];
+
 export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => void }) {
   const { isAuthed, promptLogin } = useAdminAuth();
+  const [block, setBlock] = useState<string>(BLOCK_OPTIONS[0].key);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [status, setStatus] = useState<{ type: "idle" | "loading" | "success" | "error"; message?: string }>({ type: "idle" });
   const [result, setResult] = useState<FetchResult | null>(null);
 
+  const selected = BLOCK_OPTIONS.find((b) => b.key === block) ?? BLOCK_OPTIONS[0];
+
   async function handleFetchIndicators() {
     setStatus({ type: "loading" });
     setResult(null);
     try {
-      const params = new URLSearchParams({ block: "rates" });
+      const params = new URLSearchParams({ block });
       if (startDate) params.set("start", startDate);
       if (endDate) params.set("end", endDate);
 
@@ -55,14 +71,29 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
     <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Fetch Indicators</h2>
       <p className="text-xs text-[#94A3B8] mb-5">
-        Fetch FRED series for the <span className="text-amber-400 font-medium">rates</span> block
-        (DFF, T10Y2Y, WALCL, DGS10, T10YIE, DFEDTARU) and save to database.
+        Fetch FRED series for the <span className="text-amber-400 font-medium">{selected.key}</span> block
+        ({selected.seriesPreview}) and save to database.
         Dates are optional — defaults to last 90 days.
       </p>
 
       {isAuthed ? (
         <>
           <div className="flex flex-wrap items-end gap-4 mb-5">
+            <div className="space-y-1.5">
+              <label className="text-xs text-[#94A3B8] font-mono">Block</label>
+              <select
+                value={block}
+                onChange={(e) => setBlock(e.target.value)}
+                className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+              >
+                {BLOCK_OPTIONS.map((opt) => (
+                  <option key={opt.key} value={opt.key}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="space-y-1.5">
               <label className="text-xs text-[#94A3B8] font-mono">Start date</label>
               <input
@@ -93,7 +124,7 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              Fetch &amp; Store Rates
+              Fetch &amp; Store {selected.label}
             </button>
           </div>
 

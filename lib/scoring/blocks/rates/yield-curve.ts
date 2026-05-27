@@ -23,6 +23,8 @@ export class YieldCurveScorer extends IndicatorScorer {
   readonly name = "Yield Curve (2Y–10Y)";
   readonly blockKey = "rates";
   readonly unit = "bps";
+  // Spec weight 20%, renormalized within implemented 5-scorer set (÷ 0.80).
+  readonly weight = 25.0;
   readonly description =
     "Spread between the 10-Year and 2-Year US Treasury yields. A positive slope reflects " +
     "normal term-premium and growth expectations. An inverted curve (negative spread) is " +

@@ -21,6 +21,8 @@ export class FedFundsRateLevelScorer extends IndicatorScorer {
   readonly name = "Fed Funds Rate Level";
   readonly blockKey = "rates";
   readonly unit = "%";
+  // Spec weight 15%, renormalized within implemented 5-scorer set (÷ 0.80).
+  readonly weight = 18.75;
   readonly description =
     "Current level of the Effective Federal Funds Rate. The Fed's primary policy lever — " +
     "directly sets the floor for short-term borrowing costs across the economy. " +

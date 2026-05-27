@@ -64,3 +64,17 @@
 
 - **Refactor: IndicatorSparkline, BlockSidebar, and performance**
   Refactored `IndicatorSparkline` to use a single state pattern (loading → error → idle) replacing scattered state flags. Made the admin sidebar collapsible. Enhanced `BlockSidebar` with planned block placeholders (Liquidity, Growth & Employment, Inflation, Risk Sentiment, External) for a visible roadmap. Optimized the trend endpoint with `loadObservationsForBlockOverRange` — batch-loads all observations for the full date window in one DB query, then `BlockEngine.scoreBlockRange` iterates in memory instead of N separate queries.
+
+- **Dashboard: modularize components and add calendar date picker**
+  Broke the monolithic dashboard component into reusable modules — `DomainBlockCard`, `Header`, `MetricsTable`, `ScoreCalendar`, `ScoreGauge`, `SnapshotStats`, `TrendChart`, plus shared `types` and `utils`. Replaced the old multi-month calendar with a compact popover-based date picker in the header.
+
+## May 25, 2026
+- **Dashboard: mock data dashboard and planned blocks**
+  Added a new `/mock-dashboard` page for testing with dummy data, with a "Mock Data" button in the header for quick access. Introduced `/api/mock-snapshots` endpoint for serving mock snapshot data. Added support for "Planned" blocks (Liquidity, Growth & Employment, Inflation, Risk Sentiment, External) to maintain layout consistency. Built `dashboard-adapter` to bridge the Scoring Engine output into the dashboard format with historical trend support.
+
+- **Admin: rename FRED section to Data Fetch**
+  Renamed `FredSection`/`FredPage` to `DataFetchSection`/`DataFetchPage` for clarity. Updated sidebar navigation and snapshot card API endpoint accordingly.
+
+## May 28, 2026
+- **Block-2 Inflation & Labor + weighted aggregation + manual inputs subsystem**
+  Implemented Block 2 (Inflation & Labor Market) end-to-end with 6 indicators: Core CPI YoY, Unemployment Rate, CPI Headline YoY, Wage Growth YoY (AHE), NFP Surprise, Participation Rate — all sourced from FRED except NFP consensus. Block 2 weight 20% of total Macro Pulse Score; 5-tier regime map (Stagflation Risk → Perfect Macro). Refactored `BlockEngine` to a weighted average using per-indicator `weight`; Block 1 weights renormalized within the implemented 5-scorer set (forward-guidance scorer still pending). Total score stays on the 0–120 scale (Σ blockScore) to preserve regime thresholds and dashboard gauge. Added new `indicator_manual_inputs` table + manual-inputs repo + `/api/admin/manual-inputs` + `/admin/manual-inputs` page for analyst-curated values (NFP consensus today, Forward Guidance Tone next). `loadObservationsForBlock` merges FRED + manual sources by `SeriesInputSpec.source`; scorers consume both via the same `input.observations[seriesId]` lookup. Extended FRED series catalog with `inflation_labor` block; data-fetch admin UI now block-aware. Engine metadata now exposes block + scorer `weight` and input `source`; admin UI shows weight badges on each block and indicator card, plus a "manual input" pill linking to the entry page. New helper `yoyPctFromIndex` computes YoY % from monthly index series. Block 2 also added research doc and removed from `PLANNED_BLOCK_NAMES`.

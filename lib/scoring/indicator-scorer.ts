@@ -13,8 +13,9 @@ import type { IndicatorObservation } from "@/shared/schema";
  * Each subclass declares:
  *   - identity (key, name, blockKey, unit)
  *   - documentation (description, formula, formulaPretty, examples)
- *   - inputs it needs from indicator_observations
+ *   - inputs it needs from indicator_observations (or indicator_manual_inputs)
  *   - the 1–5 scoring bands
+ *   - its weight inside the parent block (percent; spec V1)
  *   - a pure compute() that turns observations into a ScoringResult
  *
  * The same instance powers both the runtime engine and the admin docs page.
@@ -30,6 +31,11 @@ export abstract class IndicatorScorer {
   abstract readonly inputs: SeriesInputSpec[];
   abstract readonly bands: ScoreBand[];
   abstract readonly examples: IndicatorExample[];
+  /**
+   * Percent of the parent block this indicator carries. Weights across a
+   * block's scorers should sum to 100 (renormalize if a scorer is deferred).
+   */
+  abstract readonly weight: number;
 
   /** Pure function: observations → scoring result. */
   abstract compute(input: ScoringInput): ScoringResult;

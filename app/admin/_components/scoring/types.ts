@@ -20,6 +20,7 @@ export type ApiSeriesInput = {
   seriesId: string;
   lookbackDays: number;
   required: boolean;
+  source: "fred" | "manual";
 };
 
 export type ApiExample = {
@@ -33,6 +34,7 @@ export type ApiScorer = {
   name: string;
   blockKey: string;
   unit: string;
+  weight: number;
   description: string;
   formula: string;
   formulaPretty: string;
@@ -52,6 +54,7 @@ export type ApiBlock = {
   key: string;
   name: string;
   sortOrder: number;
+  weight: number;
   regimeMap: ApiRegimeMapping[];
   scorers: ApiScorer[];
 };
@@ -81,6 +84,7 @@ export type ApiBlockResult = {
   blockKey: string;
   blockName: string;
   asOfDate: string;
+  blockWeight: number;
   indicators: ApiScoringResult[];
   blockAverage: number;
   blockScore: number;

@@ -12,6 +12,9 @@ export function BlockSummary({ block, liveBlock }: Props) {
     <section className="bg-[#0B1120] border border-[#475569] rounded-xl p-6">
       <div className="flex items-baseline gap-3 mb-1">
         <h2 className="text-base font-semibold tracking-wide text-[#F8FAFC]">{block.name}</h2>
+        <span className="text-[10px] font-mono text-amber-400 border border-amber-500/20 bg-amber-500/10 rounded px-1.5 py-0.5">
+          weight {block.weight}%
+        </span>
         {liveBlock && (
           <span className="text-[10px] font-mono text-[#94A3B8]">
             avg {liveBlock.blockAverage.toFixed(2)} · score {liveBlock.blockScore}/20 ·{" "}
@@ -20,8 +23,8 @@ export function BlockSummary({ block, liveBlock }: Props) {
         )}
       </div>
       <p className="text-xs text-[#94A3B8] mb-5">
-        Block-average to regime mapping. Average is the mean of indicator scores (1–5);
-        block score is average × 4 → 0–20.
+        Block-average to regime mapping. Average is the indicator-weight-weighted mean of
+        indicator scores (1–5); block score is average × 4 → 0–20.
       </p>
 
       <table className="w-full text-xs font-mono">

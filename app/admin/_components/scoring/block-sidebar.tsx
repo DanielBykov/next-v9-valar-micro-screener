@@ -3,11 +3,10 @@
 import type { ApiBlock, ApiBlockResult } from "./types";
 
 const PLANNED_BLOCKS = [
-  "Labor Market",
-  "Inflation & Prices",
-  "Growth & Output",
-  "Credit & Liquidity",
-  "Sentiment & Surveys",
+  "Sentiment & Volatility",
+  "Commodities & Global Flow",
+  "Business Cycle & Rotation",
+  "Narrative & Political Risk",
 ];
 
 type Props = {

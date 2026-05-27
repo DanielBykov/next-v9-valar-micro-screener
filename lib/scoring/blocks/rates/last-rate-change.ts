@@ -28,6 +28,8 @@ export class LastRateChangeScorer extends IndicatorScorer {
   readonly name = "Last Rate Change Direction";
   readonly blockKey = "rates";
   readonly unit = "bps";
+  // Spec weight 5%, renormalized within implemented 5-scorer set (÷ 0.80).
+  readonly weight = 6.25;
   readonly description =
     "Direction and magnitude of the Fed's most recent policy rate change, derived from " +
     "the upper bound of the Federal Funds target range (DFEDTARU). The score is carried " +

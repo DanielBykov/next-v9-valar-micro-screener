@@ -81,3 +81,31 @@ export const insertIndicatorObservationSchema = createInsertSchema(indicatorObse
 export type IndicatorObservation = typeof indicatorObservations.$inferSelect;
 export type InsertIndicatorObservation = z.infer<typeof insertIndicatorObservationSchema>;
 
+/**
+ * Analyst-entered values for indicators with no automated free source
+ * (e.g. NFP consensus, Forward Guidance Tone). Mirrors indicator_observations
+ * shape so scorers can consume both via the same observations map.
+ */
+export const indicatorManualInputs = pgTable(
+    "indicator_manual_inputs",
+    {
+      id: serial("id").primaryKey(),
+      seriesId: text("series_id").notNull(),
+      observationDate: date("observation_date").notNull(),
+      value: numeric("value", { precision: 20, scale: 6 }).notNull(),
+      note: text("note"),
+      createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+      updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    },
+    (t) => [
+      uniqueIndex("indicator_manual_inputs_series_date_idx").on(t.seriesId, t.observationDate),
+    ],
+);
+
+export const insertIndicatorManualInputSchema = createInsertSchema(indicatorManualInputs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type IndicatorManualInput = typeof indicatorManualInputs.$inferSelect;
+export type InsertIndicatorManualInput = z.infer<typeof insertIndicatorManualInputSchema>;

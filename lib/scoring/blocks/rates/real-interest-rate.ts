@@ -26,6 +26,8 @@ export class RealInterestRateScorer extends IndicatorScorer {
   readonly name = "Real Interest Rate";
   readonly blockKey = "rates";
   readonly unit = "%";
+  // Spec weight 25%, renormalized within implemented 5-scorer set (÷ 0.80).
+  readonly weight = 31.25;
   readonly description =
     "Inflation-adjusted 10-year Treasury yield. Computed as the nominal 10Y yield minus " +
     "the 10Y breakeven (market-implied) inflation rate. High real rates pressure asset " +

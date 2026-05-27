@@ -30,6 +30,8 @@ export class QePolicyScorer extends IndicatorScorer {
   readonly name = "QE / QT Policy";
   readonly blockKey = "rates";
   readonly unit = "$B/mo";
+  // Spec weight 15%, renormalized within implemented 5-scorer set (÷ 0.80).
+  readonly weight = 18.75;
   readonly description =
     "Net change in the Fed's balance sheet over the last 4 weeks, used as a proxy for " +
     "the monthly pace of QE (expansion) or QT (runoff). Expansionary policy injects " +

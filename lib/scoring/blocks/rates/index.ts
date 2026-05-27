@@ -50,18 +50,18 @@ function regimeFor(blockAverage: number): string {
 
 /**
  * Rates & CB Policy block.
- * Scorers will be registered as Tasks 3–7 land:
- *   - fed_funds_rate_level   (Task 3)
- *   - yield_curve_2y10y      (Task 4)
- *   - qe_qt_policy           (Task 5)
- *   - real_interest_rate     (Task 6)
- *   - last_rate_change       (Task 7)
- *   - forward_guidance_tone  (Task 8 — manual admin input, not auto-scored)
+ *
+ * NOTE on weights: the V1 spec assigns 1.3 Forward Guidance Tone a 20%
+ * intra-block weight, but that scorer is not yet implemented. The remaining
+ * 5 scorers (raw spec weights 25/20/15/15/5 → 80 total) are renormalized to
+ * sum to 100. When Forward Guidance ships the per-scorer weights revert to
+ * the raw spec values.
  */
 export const ratesBlock: BlockDefinition = {
   key: "rates",
   name: "Rates & Central Bank Policy",
   sortOrder: 0,
+  weight: 25,
   scorers: [
     new FedFundsRateLevelScorer(),
     new LastRateChangeScorer(),
