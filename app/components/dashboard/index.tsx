@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, SetStateAction} from "react";
-import {Activity} from "lucide-react";
 import {TooltipProvider} from "@/app/components/ui/tooltip";
 import {toNYDateString} from "./utils";
 import type {DashboardData} from "./types";
 import {Header} from "./Header";
 import {ScoreGauge} from "./ScoreGauge";
 import {SnapshotStats} from "./SnapshotStats";
-import {ScoreCalendar} from "./ScoreCalendar";
+import {ScoreGaugeSkeleton, SnapshotStatsSkeleton} from "./Skeletons";
 import {DomainBlockCard} from "./DomainBlockCard";
 import {TrendChart} from "./TrendChart";
 import {MetricsTable} from "./MetricsTable";
@@ -56,17 +55,6 @@ export default function Home() {
         });
   }, [selectedDate]);
 
-  if (isLoading && !data) {
-    return (
-        <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
-          <div className="flex items-center gap-3 text-[#94A3B8]">
-            <Activity className="h-5 w-5 animate-pulse"/>
-            <span className="font-mono text-sm">Loading macro intelligence...</span>
-          </div>
-        </div>
-    );
-  }
-
   if (!isLoading && (error || !data)) {
     return (
         <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
@@ -75,59 +63,63 @@ export default function Home() {
     );
   }
 
-  const {snapshot, blocks: blocksData, metrics: metricsData, trend: trendData} = data!;
+  const initialDate = selectedDate ?? (data ? new Date(data.snapshot.snapshotDate + "T12:00:00-05:00") : new Date());
 
   return (
       <TooltipProvider>
         <div className="relative min-h-screen bg-[#0F172A] text-[#F8FAFC] font-sans pb-16">
 
-          {isLoading && data && (
-              <div className="fixed inset-0 z-50 bg-[#0F172A]/70 flex items-center justify-center">
-                <div className="flex items-center gap-3 text-[#94A3B8]">
-                  <Activity className="h-5 w-5 animate-pulse"/>
-                  <span className="font-mono text-sm">Loading macro intelligence...</span>
-                </div>
-              </div>
-          )}
-
           <Header
-              snapshotDate={snapshot.snapshotDate}
+              snapshotDate={data?.snapshot.snapshotDate ?? ""}
               snapshotScores={snapshotScores}
               isCalendarLoading={isCalendarLoading}
-              selectedDate={selectedDate ?? new Date(snapshot.snapshotDate + "T12:00:00-05:00")}
+              selectedDate={initialDate}
               onSelectDate={(date: SetStateAction<Date | undefined>) => setSelectedDate(date)}
-        />
+          />
 
-        <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+          <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <ScoreGauge snapshot={snapshot} />
-            <SnapshotStats snapshot={snapshot} />
-          </section>
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {isLoading || !data ? (
+                <>
+                  <ScoreGaugeSkeleton />
+                  <SnapshotStatsSkeleton />
+                </>
+              ) : (
+                <>
+                  <ScoreGauge snapshot={data.snapshot} />
+                  <SnapshotStats snapshot={data.snapshot} />
+                </>
+              )}
+            </section>
 
-          <section>
-            <div className="flex items-center gap-2 mb-5">
-              <div className="h-px flex-1 bg-[#334155]" />
-              <span className="text-xs font-mono text-[#94A3B8] uppercase tracking-[0.15em]">Domain Analysis</span>
-              <div className="h-px flex-1 bg-[#334155]" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {blocksData.map((block, i) => (
-                <DomainBlockCard key={block.id} block={block} index={i} />
-              ))}
-            </div>
-          </section>
+            {!isLoading && data && (
+              <div className="animate-in fade-in duration-500 space-y-8">
+                <section>
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="h-px flex-1 bg-[#334155]" />
+                    <span className="text-xs font-mono text-[#94A3B8] uppercase tracking-[0.15em]">Domain Analysis</span>
+                    <div className="h-px flex-1 bg-[#334155]" />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {data.blocks.map((block, i) => (
+                      <DomainBlockCard key={block.id} block={block} index={i} />
+                    ))}
+                  </div>
+                </section>
 
-          <section>
-            <TrendChart trendData={trendData} />
-          </section>
+                <section>
+                  <TrendChart trendData={data.trend} />
+                </section>
 
-          <section>
-            <MetricsTable metrics={metricsData} />
-          </section>
+                <section>
+                  <MetricsTable metrics={data.metrics} />
+                </section>
+              </div>
+            )}
 
-        </main>
-      </div>
-    </TooltipProvider>
+          </main>
+        </div>
+      </TooltipProvider>
   );
 }
