@@ -26,6 +26,8 @@ export interface DashboardData {
       maxScore: number;
       interpretation: string;
       isTopDriver: number;
+      rawValue?: number | null;
+      unit?: string | null;
     }>;
     isPlanned?: boolean;
   }>;
@@ -36,6 +38,8 @@ export interface DashboardData {
     score: number;
     maxScore: number;
     interpretation: string;
+    rawValue?: number | null;
+    unit?: string | null;
   }>;
   trend: Array<{
     month: string;

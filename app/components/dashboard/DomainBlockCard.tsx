@@ -1,5 +1,5 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/app/components/ui/tooltip";
-import { getBlockSignal, getMetricDot } from "./utils";
+import { formatRawValue, getBlockSignal, getMetricDot } from "./utils";
 import type { DashboardData } from "./types";
 
 type Block = DashboardData["blocks"][number];
@@ -48,13 +48,20 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
 
       <div className="px-5 py-3">
         <div className="space-y-2">
-          {block.metrics.map((metric) => (
+          {block.metrics.map((metric) => {
+            const hasRaw = "rawValue" in metric;
+            return (
             <Tooltip key={metric.id}>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-3 group cursor-default">
                   <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${getMetricDot(metric.score)}`} />
                   <span className="text-xs text-[#94A3B8] flex-1 truncate group-hover:text-[#F8FAFC] transition-colors">
                     {metric.name}
+                    {hasRaw && (
+                      <span className="ml-1 font-mono text-[#64748B]">
+                        ({formatRawValue(metric.rawValue, metric.unit)})
+                      </span>
+                    )}
                   </span>
                   <span className="text-xs font-mono text-[#F8FAFC] w-8 text-right">{metric.score}/5</span>
                   <div className="w-16 h-1.5 bg-[#334155] rounded-full overflow-hidden flex-shrink-0">
@@ -70,7 +77,8 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
                 <p className="text-[#94A3B8]">{metric.interpretation}</p>
               </TooltipContent>
             </Tooltip>
-          ))}
+            );
+          })}
         </div>
       </div>
 

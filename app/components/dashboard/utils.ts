@@ -44,3 +44,14 @@ export function getScoreColor(score: number): string {
   if (score >= 55) return "#F59E0B";
   return "#EF4444";
 }
+
+export function formatRawValue(
+  rawValue: number | null | undefined,
+  unit: string | null | undefined,
+): string {
+  if (rawValue == null) return "—";
+  if (unit === "%" || unit === "% YoY") return `${rawValue.toFixed(2)}${unit === "%" ? "%" : "% YoY"}`;
+  if (unit === "bps") return `${Math.round(rawValue)} bps`;
+  if (unit) return `${rawValue.toFixed(2)} ${unit}`;
+  return rawValue.toFixed(2);
+}

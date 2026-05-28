@@ -30,6 +30,7 @@ function toDashboardMetric(
   metricIndex: number,
 ): DashboardMetric {
   const isTopDriver = indicator.score <= TOP_DRIVER_MAX_SCORE ? 1 : 0;
+  const scorer = getScorerByKey(indicator.indicatorKey);
   return {
     id: blockIndex * 100 + metricIndex + 1,
     name: indicatorDisplayName(indicator.indicatorKey),
@@ -38,6 +39,8 @@ function toDashboardMetric(
     maxScore: METRIC_MAX_SCORE,
     interpretation: indicator.interpretation,
     isTopDriver,
+    rawValue: indicator.rawValue,
+    unit: scorer?.unit ?? null,
   };
 }
 
