@@ -71,29 +71,29 @@ export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
   const filteredRows = selectedSeries.size > 0 ? rows.filter((r) => selectedSeries.has(r.seriesId)) : rows;
 
   return (
-    <section ref={sectionRef} className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+    <section ref={sectionRef} className="bg-surface-raised border border-border-subtle rounded-xl p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Indicators</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">Query stored observations from the <span className="font-mono">indicator_observations</span> table.</p>
+      <p className="text-xs text-text-secondary mb-5">Query stored observations from the <span className="font-mono">indicator_observations</span> table.</p>
 
       <div className="grid gap-4 mb-5">
         <div className="flex flex-wrap items-end gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs text-[#94A3B8] font-mono block">From</label>
+            <label className="text-xs text-text-secondary font-mono block">From</label>
             <input
               type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] focus:outline-none focus:border-[#475569] min-w-[160px] [color-scheme:dark]"
+              className="px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary focus:outline-none focus:border-border-default min-w-[160px] [color-scheme:dark]"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs text-[#94A3B8] font-mono block">To</label>
+            <label className="text-xs text-text-secondary font-mono block">To</label>
             <input
               type="date"
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] focus:outline-none focus:border-[#475569] min-w-[160px] [color-scheme:dark]"
+              className="px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary focus:outline-none focus:border-border-default min-w-[160px] [color-scheme:dark]"
             />
           </div>
 
@@ -120,7 +120,7 @@ export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
 
         <div className="flex items-start gap-4">
           <div className="space-y-1.5 flex-1">
-            <label className="text-xs text-[#94A3B8] font-mono block">
+            <label className="text-xs text-text-secondary font-mono block">
               Series ({selectedSeries.size === 0 ? "all" : `${selectedSeries.size} selected`})
             </label>
             <div className="flex flex-wrap gap-2">
@@ -132,7 +132,7 @@ export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-mono cursor-pointer transition-colors ${
                       checked
                         ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
-                        : "border-[#334155] bg-[#0F172A] text-[#94A3B8] hover:border-[#475569]"
+                        : "border-border-subtle bg-surface-base text-text-secondary hover:border-border-default"
                     }`}
                   >
                     <input
@@ -155,20 +155,20 @@ export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
               onChange={(e) => setGroupByDate(e.target.checked)}
               className="h-3 w-3 accent-amber-500"
             />
-            <span className="text-xs text-[#94A3B8] font-mono">Group by date</span>
+            <span className="text-xs text-text-secondary font-mono">Group by date</span>
           </label>
         </div>
       </div>
 
       {filteredRows.length > 0 && (
-        <div className="border border-[#334155] rounded-lg overflow-hidden">
+        <div className="border border-border-subtle rounded-lg overflow-hidden">
           <div className="max-h-[650px] overflow-y-auto">
               <table className="w-full text-xs font-mono">
-                <thead className="bg-[#1E293B] sticky top-0">
+                <thead className="bg-surface-overlay sticky top-0">
                   <tr>
-                    {!groupByDate && <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">observation_date</th>}
-                    <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">series_id</th>
-                    <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">value</th>
+                    {!groupByDate && <th className="text-left px-4 py-2 text-text-secondary font-medium">observation_date</th>}
+                    <th className="text-left px-4 py-2 text-text-secondary font-medium">series_id</th>
+                    <th className="text-right px-4 py-2 text-text-secondary font-medium">value</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -180,15 +180,15 @@ export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
                         }, {});
                         return Object.keys(grouped).sort().map((date) => (
                           <>
-                            <tr key={`hdr-${date}`} className="bg-[#1E293B]/70">
-                              <td colSpan={2} className="px-4 py-2 text-[#94A3B8] font-semibold">
+                            <tr key={`hdr-${date}`} className="bg-surface-overlay/70">
+                              <td colSpan={2} className="px-4 py-2 text-text-secondary font-semibold">
                                 {date}
-                                <span className="ml-2 text-[#64748B] font-normal">({grouped[date].length})</span>
+                                <span className="ml-2 text-text-muted font-normal">({grouped[date].length})</span>
                               </td>
                             </tr>
                             {grouped[date].map((r) => (
-                              <tr key={r.id} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                                <td className="px-4 py-1.5 pl-8 text-[#F8FAFC]">{r.seriesId}</td>
+                              <tr key={r.id} className="border-t border-border-subtle/50 hover:bg-surface-overlay/50">
+                                <td className="px-4 py-1.5 pl-8 text-text-primary">{r.seriesId}</td>
                                 <td className="px-4 py-1.5 text-right text-amber-400">{Number(r.value).toFixed(2)}</td>
                               </tr>
                             ))}
@@ -196,9 +196,9 @@ export function IndicatorsTable({ filterMonth }: { filterMonth?: string }) {
                         ));
                       })()
                     : filteredRows.map((r) => (
-                        <tr key={r.id} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                          <td className="px-4 py-1.5 text-[#F8FAFC]">{r.observationDate}</td>
-                          <td className="px-4 py-1.5 text-[#F8FAFC]">{r.seriesId}</td>
+                        <tr key={r.id} className="border-t border-border-subtle/50 hover:bg-surface-overlay/50">
+                          <td className="px-4 py-1.5 text-text-primary">{r.observationDate}</td>
+                          <td className="px-4 py-1.5 text-text-primary">{r.seriesId}</td>
                           <td className="px-4 py-1.5 text-right text-amber-400">{Number(r.value).toFixed(2)}</td>
                         </tr>
                       ))

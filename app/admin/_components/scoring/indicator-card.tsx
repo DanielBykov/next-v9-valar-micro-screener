@@ -32,13 +32,13 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
   return (
     <section
       id={`indicator-${scorer.key}`}
-      className="bg-[#111827] border border-[#334155] rounded-xl p-6 space-y-5"
+      className="bg-surface-raised border border-border-subtle rounded-xl p-6 space-y-5"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-[#F8FAFC]">{scorer.name}</h3>
+            <h3 className="text-sm font-semibold text-text-primary">{scorer.name}</h3>
             <span className="text-[10px] font-mono text-amber-400 border border-amber-500/20 bg-amber-500/10 rounded px-1.5 py-0.5">
               weight {scorer.weight}%
             </span>
@@ -53,7 +53,7 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
               </Link>
             )}
           </div>
-          <p className="text-[11px] font-mono text-[#64748B] mt-0.5">
+          <p className="text-[11px] font-mono text-text-muted mt-0.5">
             {scorer.key} · unit {scorer.unit}
           </p>
         </div>
@@ -65,18 +65,18 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
               {liveResult.score} · {liveResult.bandLabel}
             </span>
             {liveResult.rawValue != null && (
-              <span className="text-[11px] font-mono text-[#94A3B8]">
+              <span className="text-[11px] font-mono text-text-secondary">
                 raw {liveResult.rawValue.toFixed(2)}{scorer.unit === "%" ? "%" : ""}
               </span>
             )}
           </div>
         ) : (
-          <span className="text-[11px] font-mono text-[#64748B]">no live data</span>
+          <span className="text-[11px] font-mono text-text-muted">no live data</span>
         )}
       </div>
 
       {/* Description */}
-      <p className="text-xs text-[#cbd5e1] leading-relaxed">{scorer.description}</p>
+      <p className="text-xs text-text-faint leading-relaxed">{scorer.description}</p>
 
       {/* Live warning */}
       {liveResult?.warning && (
@@ -91,19 +91,19 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
 
       {/* Inputs */}
       <div className="space-y-1">
-        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Inputs</div>
+        <div className="text-[10px] uppercase tracking-wider text-text-muted">Inputs</div>
         <InputsTable inputs={scorer.inputs} inputsUsed={liveResult?.inputsUsed ?? []} />
       </div>
 
       {/* Bands */}
       <div className="space-y-1">
-        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Bands</div>
+        <div className="text-[10px] uppercase tracking-wider text-text-muted">Bands</div>
         <ScoringBandsTable bands={scorer.bands} currentScore={liveResult?.score ?? null} />
       </div>
 
       {/* Examples */}
       <div className="space-y-1">
-        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Examples</div>
+        <div className="text-[10px] uppercase tracking-wider text-text-muted">Examples</div>
         <ExamplesTable examples={scorer.examples} />
       </div>
 

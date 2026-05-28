@@ -15,8 +15,8 @@ export function InputsTable({ inputs, inputsUsed }: Props) {
 
   return (
     <table className="w-full text-xs font-mono">
-      <thead className="text-[#64748B]">
-        <tr className="border-b border-[#1E293B]">
+      <thead className="text-text-muted">
+        <tr className="border-b border-surface-overlay">
           <th className="text-left py-1.5 pr-3">Series</th>
           <th className="text-left py-1.5 pr-3">Source</th>
           <th className="text-left py-1.5 pr-3">Lookback</th>
@@ -30,12 +30,12 @@ export function InputsTable({ inputs, inputsUsed }: Props) {
           const used = usedByseries.get(spec.seriesId);
           const isManual = spec.source === "manual";
           return (
-            <tr key={spec.seriesId} className="border-b border-[#1E293B]">
+            <tr key={spec.seriesId} className="border-b border-surface-overlay">
               <td className="py-1.5 pr-3">
                 {isManual ? (
                   <a
                     href="/admin/manual-inputs"
-                    className="text-[#cbd5e1] hover:text-[#F8FAFC] inline-flex items-center gap-1"
+                    className="text-text-faint hover:text-text-primary inline-flex items-center gap-1"
                   >
                     {spec.seriesId}
                     <Pencil className="h-3 w-3" />
@@ -45,18 +45,18 @@ export function InputsTable({ inputs, inputsUsed }: Props) {
                     href={FRED_URL(spec.seriesId)}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#cbd5e1] hover:text-[#F8FAFC] inline-flex items-center gap-1"
+                    className="text-text-faint hover:text-text-primary inline-flex items-center gap-1"
                   >
                     {spec.seriesId}
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 )}
               </td>
-              <td className="py-1.5 pr-3 text-[#94A3B8]">{spec.source}</td>
-              <td className="py-1.5 pr-3 text-[#94A3B8]">{spec.lookbackDays}d</td>
-              <td className="py-1.5 pr-3 text-[#94A3B8]">{spec.required ? "yes" : "no"}</td>
-              <td className="py-1.5 pr-3 text-[#94A3B8]">{used?.date ?? "—"}</td>
-              <td className="py-1.5 text-[#cbd5e1]">
+              <td className="py-1.5 pr-3 text-text-secondary">{spec.source}</td>
+              <td className="py-1.5 pr-3 text-text-secondary">{spec.lookbackDays}d</td>
+              <td className="py-1.5 pr-3 text-text-secondary">{spec.required ? "yes" : "no"}</td>
+              <td className="py-1.5 pr-3 text-text-secondary">{used?.date ?? "—"}</td>
+              <td className="py-1.5 text-text-faint">
                 {used ? Number(used.value).toString() : "—"}
               </td>
             </tr>

@@ -2,26 +2,48 @@
 @import "tw-animate-css";
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  
+  /* --- Primitive surface scale --- */
+  --color-surface-deep:    #0B1120; /* custom    — sunken sections         */
+  --color-surface-base:    #0F172A; /* slate-950 — page background        */
+  --color-surface-raised:  #111827; /* gray-900  — headers, nav            */
+  --color-surface-overlay: #1E293B; /* slate-800 — cards, panels           */
+
+  /* --- Primitive border scale --- */
+  --color-border-subtle:   #334155; /* slate-700 — dividers, subtle lines  */
+  --color-border-default:  #475569; /* slate-600 — standard borders        */
+
+  /* --- Primitive text scale --- */
+  --color-text-primary:    #F8FAFC; /* slate-50  — headings, primary copy  */
+  --color-text-secondary:  #94A3B8; /* slate-400 — secondary labels        */
+  --color-text-muted:      #64748B; /* slate-500 — placeholders, hints     */
+  --color-text-faint:      #CBD5E1; /* slate-300 — code, de-emphasised     */
+
+  /* --- Primitive accent scale --- */
+  --color-accent-blue:     #3B82F6; /* blue-500  — primary action          */
+  --color-accent-amber:    #F59E0B; /* amber-500 — warning / caution       */
+  --color-accent-red:      #EF4444; /* red-500   — destructive / negative  */
+
+  /* --- shadcn semantic tokens (aliased to primitives above) --- */
+  --color-background            : var(--color-surface-base);
+  --color-foreground            : var(--color-text-primary);
+  --color-card                  : var(--color-surface-overlay);
+  --color-card-foreground       : var(--color-text-primary);
+  --color-popover               : var(--color-surface-overlay);
+  --color-popover-foreground    : var(--color-text-primary);
+  --color-primary               : var(--color-accent-blue);
+  --color-primary-foreground    : var(--color-text-primary);
+  --color-secondary             : var(--color-surface-overlay);
+  --color-secondary-foreground  : var(--color-text-primary);
+  --color-muted                 : var(--color-surface-overlay);
+  --color-muted-foreground      : var(--color-text-secondary);
+  --color-accent                : var(--color-surface-overlay);
+  --color-accent-foreground     : var(--color-text-primary);
+  --color-destructive           : var(--color-accent-red);
+  --color-destructive-foreground: var(--color-text-primary);
+  --color-border                : var(--color-border-subtle);
+  --color-input                 : var(--color-border-subtle);
+  --color-ring                  : var(--color-accent-blue);
+
   --color-chart-1: hsl(var(--chart-1));
   --color-chart-2: hsl(var(--chart-2));
   --color-chart-3: hsl(var(--chart-3));
@@ -32,33 +54,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   --font-sans: var(--font-inter, "Inter"), sans-serif;
   --font-mono: var(--font-jetbrains-mono, "JetBrains Mono"), monospace;
 }
 
 :root {
-  --background: 222 47% 11%;
-  --foreground: 210 40% 98%;
-  --card: 220 40% 13%;
-  --card-foreground: 210 40% 98%;
-  --popover: 220 40% 13%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 215 28% 17%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 215 28% 17%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 215 28% 17%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 215 28% 25%;
-  --input: 215 28% 25%;
-  --ring: 217 91% 60%;
   --radius: 0.5rem;
-  
+
+  /* Chart colors kept as HSL vars (referenced via hsl(var(...)) in @theme) */
   --chart-1: 217 91% 60%;
   --chart-2: 160 84% 39%;
   --chart-3: 38 92% 50%;

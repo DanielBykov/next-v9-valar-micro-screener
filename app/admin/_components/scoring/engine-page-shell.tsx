@@ -45,12 +45,12 @@ export function EnginePageShell({ metadata, live, liveError }: Props) {
     <div className="space-y-6">
       <header>
         <h1 className="text-lg font-semibold tracking-wide">Scoring Engine</h1>
-        <p className="text-xs text-[#94A3B8] mt-1">
+        <p className="text-xs text-text-secondary mt-1">
           Live, code-driven documentation of every block and indicator. Same classes
-          power the dashboard at <code className="font-mono text-[#cbd5e1]">/api/dashboard?mode=engine</code>.
+          power the dashboard at <code className="font-mono text-text-faint">/api/dashboard?mode=engine</code>.
         </p>
         {live && (
-          <p className="text-[11px] text-[#64748B] font-mono mt-2">
+          <p className="text-[11px] text-text-muted font-mono mt-2">
             As of {live.asOfDate} · total {live.totalScore}/120 · {live.regime}
           </p>
         )}
@@ -80,7 +80,7 @@ export function EnginePageShell({ metadata, live, liveError }: Props) {
           </div>
         </>
       ) : (
-        <p className="text-xs text-[#64748B] italic">No blocks registered.</p>
+        <p className="text-xs text-text-muted italic">No blocks registered.</p>
       )}
     </div>
   );

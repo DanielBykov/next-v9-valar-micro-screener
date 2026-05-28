@@ -87,11 +87,11 @@ export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
 
   return (
     <div className="space-y-2">
-      <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Try it</div>
+      <div className="text-[10px] uppercase tracking-wider text-text-muted">Try it</div>
       <div className="grid grid-cols-2 gap-2">
         {scorerMeta.inputs.map((input) => (
           <label key={input.seriesId} className="flex flex-col gap-1">
-            <span className="text-[10px] font-mono text-[#94A3B8]">
+            <span className="text-[10px] font-mono text-text-secondary">
               {input.seriesId}
               {input.required ? "" : " (optional)"}
             </span>
@@ -102,7 +102,7 @@ export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
               onChange={(e) =>
                 setValues((prev) => ({ ...prev, [input.seriesId]: e.target.value }))
               }
-              className="bg-[#0F172A] border border-[#334155] rounded-md px-2 py-1 text-xs font-mono text-[#F8FAFC] focus:outline-none focus:border-[#475569]"
+              className="bg-surface-base border border-border-subtle rounded-md px-2 py-1 text-xs font-mono text-text-primary focus:outline-none focus:border-border-default"
             />
           </label>
         ))}
@@ -111,14 +111,14 @@ export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
         <button
           type="button"
           onClick={onRun}
-          className="bg-[#1E293B] hover:bg-[#334155] border border-[#334155] text-[#F8FAFC] text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+          className="bg-surface-overlay hover:bg-border-subtle border border-border-subtle text-text-primary text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
         >
           Compute
         </button>
         <button
           type="button"
           onClick={onReset}
-          className="text-[#94A3B8] hover:text-[#F8FAFC] text-xs px-2 py-1.5 rounded-md transition-colors"
+          className="text-text-secondary hover:text-text-primary text-xs px-2 py-1.5 rounded-md transition-colors"
         >
           Reset
         </button>
@@ -128,15 +128,15 @@ export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
         <p className="text-[11px] text-red-400 font-mono">{error}</p>
       )}
       {result && (
-        <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3 space-y-1 text-xs font-mono">
+        <div className="bg-surface-base border border-border-subtle rounded-md p-3 space-y-1 text-xs font-mono">
           <div>
-            <span className="text-[#64748B]">score </span>
-            <span className="text-[#F8FAFC] font-semibold">{result.score}</span>
-            <span className="text-[#64748B]"> · band </span>
-            <span className="text-[#cbd5e1]">{result.bandLabel}</span>
+            <span className="text-text-muted">score </span>
+            <span className="text-text-primary font-semibold">{result.score}</span>
+            <span className="text-text-muted"> · band </span>
+            <span className="text-text-faint">{result.bandLabel}</span>
           </div>
-          <div className="text-[#94A3B8]">{result.formulaTrace}</div>
-          <div className="text-[#94A3B8]">{result.interpretation}</div>
+          <div className="text-text-secondary">{result.formulaTrace}</div>
+          <div className="text-text-secondary">{result.interpretation}</div>
           {result.warning && (
             <div className="text-amber-400">⚠ {result.warning}</div>
           )}

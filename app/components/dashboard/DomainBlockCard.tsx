@@ -10,17 +10,17 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
   if (block.isPlanned) {
     return (
       <div
-        className="bg-[#1E293B]/40 border border-dashed border-[#334155] rounded-xl overflow-hidden opacity-70"
+        className="bg-surface-overlay/40 border border-dashed border-border-subtle rounded-xl overflow-hidden opacity-70"
         data-testid={`card-block-${index}`}
       >
-        <div className="px-5 py-4 border-b border-[#334155]/50 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-[#94A3B8]">{block.name}</h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#475569] text-[#94A3B8] bg-[#0F172A]/60">
+        <div className="px-5 py-4 border-b border-border-subtle/50 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-text-secondary">{block.name}</h3>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-border-default text-text-secondary bg-surface-base/60">
             Planned
           </span>
         </div>
         <div className="px-5 py-10 flex items-center justify-center">
-          <p className="text-xs text-[#94A3B8] italic">{block.summary}</p>
+          <p className="text-xs text-text-secondary italic">{block.summary}</p>
         </div>
       </div>
     );
@@ -28,11 +28,11 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
 
   return (
     <div
-      className={`bg-[#1E293B] border ${signal.borderColor} rounded-xl ${signal.glowClass} overflow-hidden`}
+      className={`bg-surface-overlay border ${signal.borderColor} rounded-xl ${signal.glowClass} overflow-hidden`}
       data-testid={`card-block-${index}`}
     >
-      <div className="px-5 py-4 border-b border-[#334155]/50 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-[#F8FAFC]">{block.name}</h3>
+      <div className="px-5 py-4 border-b border-border-subtle/50 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-text-primary">{block.name}</h3>
         <div className="flex items-center gap-3">
           <span
             className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border"
@@ -40,8 +40,8 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
           >
             {signal.label}
           </span>
-          <span className="text-lg font-bold font-mono text-[#F8FAFC]">
-            {block.score}<span className="text-xs text-[#94A3B8] font-normal ml-0.5">/{block.maxScore}</span>
+          <span className="text-lg font-bold font-mono text-text-primary">
+            {block.score}<span className="text-xs text-text-secondary font-normal ml-0.5">/{block.maxScore}</span>
           </span>
         </div>
       </div>
@@ -55,16 +55,16 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-3 group cursor-default">
                   <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${getMetricDot(metric.score)}`} />
-                  <span className="text-xs text-[#94A3B8] flex-1 truncate group-hover:text-[#F8FAFC] transition-colors">
+                  <span className="text-xs text-text-secondary flex-1 truncate group-hover:text-text-primary transition-colors">
                     {metric.name}
                     {hasRaw && (
-                      <span className="ml-1 font-mono text-[#64748B]">
+                      <span className="ml-1 font-mono text-text-muted">
                         ({formatRawValue(metric.rawValue, metric.unit)})
                       </span>
                     )}
                   </span>
-                  <span className="text-xs font-mono text-[#F8FAFC] w-8 text-right">{metric.score}/5</span>
-                  <div className="w-16 h-1.5 bg-[#334155] rounded-full overflow-hidden flex-shrink-0">
+                  <span className="text-xs font-mono text-text-primary w-8 text-right">{metric.score}/5</span>
+                  <div className="w-16 h-1.5 bg-border-subtle rounded-full overflow-hidden flex-shrink-0">
                     <div
                       className="h-full rounded-full transition-all"
                       style={{ width: `${(metric.score / 5) * 100}%`, backgroundColor: signal.color }}
@@ -72,9 +72,9 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
                   </div>
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="top" className="bg-[#1E293B] border-[#334155] text-[#F8FAFC] text-xs max-w-xs">
+              <TooltipContent side="top" className="bg-surface-overlay border-border-subtle text-text-primary text-xs max-w-xs">
                 <p className="font-medium mb-1">{metric.name}</p>
-                <p className="text-[#94A3B8]">{metric.interpretation}</p>
+                <p className="text-text-secondary">{metric.interpretation}</p>
               </TooltipContent>
             </Tooltip>
             );
@@ -82,20 +82,20 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
         </div>
       </div>
 
-      <div className="px-5 py-3 border-t border-[#334155]/50">
+      <div className="px-5 py-3 border-t border-border-subtle/50">
         {block.drivers.length > 0 && (
           <div className="flex gap-3 mb-2">
-            <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider flex-shrink-0 pt-0.5">Drivers</span>
+            <span className="text-[10px] font-mono text-text-secondary uppercase tracking-wider flex-shrink-0 pt-0.5">Drivers</span>
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {block.drivers.map((d, j) => (
-                <span key={j} className="text-xs text-[#94A3B8]">
-                  {d.name}: <span className="font-mono text-[#F8FAFC]">{d.score}/5</span>
+                <span key={j} className="text-xs text-text-secondary">
+                  {d.name}: <span className="font-mono text-text-primary">{d.score}/5</span>
                 </span>
               ))}
             </div>
           </div>
         )}
-        <p className="text-[11px] text-[#94A3B8]/80 italic leading-relaxed">&quot;{block.summary}&quot;</p>
+        <p className="text-[11px] text-text-secondary/80 italic leading-relaxed">&quot;{block.summary}&quot;</p>
       </div>
     </div>
   );

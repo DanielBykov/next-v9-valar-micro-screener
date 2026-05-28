@@ -53,7 +53,7 @@ export default function ManualInputsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-mono">
+      <div className="flex items-center gap-2 text-xs text-text-secondary font-mono">
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading manual inputs…
       </div>
@@ -66,9 +66,9 @@ export default function ManualInputsPage() {
 
   if (!data || data.catalog.length === 0) {
     return (
-      <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+      <section className="bg-surface-raised border border-border-subtle rounded-xl p-6">
         <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Manual Inputs</h2>
-        <p className="text-xs text-[#94A3B8]">
+        <p className="text-xs text-text-secondary">
           No scorers currently declare a manual input. When a scorer marks an input as{" "}
           <code className="text-amber-400">source: "manual"</code>, it appears here for entry.
         </p>
@@ -86,9 +86,9 @@ export default function ManualInputsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+      <section className="bg-surface-raised border border-border-subtle rounded-xl p-6">
         <h1 className="text-sm font-semibold uppercase tracking-wider mb-1">Manual Inputs</h1>
-        <p className="text-xs text-[#94A3B8]">
+        <p className="text-xs text-text-secondary">
           Enter analyst-curated values for series with no automated free source (e.g. NFP
           consensus, Forward Guidance Tone). Each entry upserts on (series, date).
         </p>

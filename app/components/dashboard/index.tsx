@@ -57,7 +57,7 @@ export default function Home() {
 
   if (!isLoading && (error || !data)) {
     return (
-        <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
+        <div className="min-h-screen bg-surface-base flex items-center justify-center">
           <div className="text-red-400 font-mono text-sm">System error: Failed to load dashboard data.</div>
         </div>
     );
@@ -67,7 +67,7 @@ export default function Home() {
 
   return (
       <TooltipProvider>
-        <div className="relative min-h-screen bg-[#0F172A] text-[#F8FAFC] font-sans pb-16">
+        <div className="relative min-h-screen bg-surface-base text-text-primary font-sans pb-16">
 
           <Header
               snapshotDate={data?.snapshot.snapshotDate ?? ""}
@@ -97,9 +97,9 @@ export default function Home() {
               <div className="animate-in fade-in duration-500 space-y-8">
                 <section>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="h-px flex-1 bg-[#334155]" />
-                    <span className="text-xs font-mono text-[#94A3B8] uppercase tracking-[0.15em]">Domain Analysis</span>
-                    <div className="h-px flex-1 bg-[#334155]" />
+                    <div className="h-px flex-1 bg-border-subtle" />
+                    <span className="text-xs font-mono text-text-secondary uppercase tracking-[0.15em]">Domain Analysis</span>
+                    <div className="h-px flex-1 bg-border-subtle" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {data.blocks.map((block, i) => (

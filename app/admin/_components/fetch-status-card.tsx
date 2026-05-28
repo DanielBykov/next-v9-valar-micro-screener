@@ -64,25 +64,25 @@ export function FetchStatusCard({ onFetchComplete }: { onFetchComplete?: () => v
   const allSeries = SERIES_BY_BLOCK.rates;
 
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+    <section className="bg-[surface-raised] border border-[border-subtle] rounded-xl p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">FRED Fetch Status</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">Data freshness per series</p>
+      <p className="text-xs text-[text-secondary] mb-5">Data freshness per series</p>
 
       {loading ? (
-        <div className="flex items-center gap-2 text-xs text-[#64748B]">
+        <div className="flex items-center gap-2 text-xs text-[text-muted]">
           <Loader2 className="h-4 w-4 animate-spin" /> Loading…
         </div>
       ) : error ? (
         <span className="text-xs text-red-400 font-mono">{error}</span>
       ) : (
         <>
-          <div className="border border-[#334155] rounded-lg overflow-hidden mb-5">
+          <div className="border border-[border-subtle] rounded-lg overflow-hidden mb-5">
             <table className="w-full text-xs font-mono">
-              <thead className="bg-[#1E293B]">
+              <thead className="bg-[surface-overlay]">
                 <tr>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Series</th>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Last Fetched</th>
-                  <th className="text-center px-4 py-2 text-[#94A3B8] font-medium">Freshness</th>
+                  <th className="text-left px-4 py-2 text-[text-secondary] font-medium">Series</th>
+                  <th className="text-left px-4 py-2 text-[text-secondary] font-medium">Last Fetched</th>
+                  <th className="text-center px-4 py-2 text-[text-secondary] font-medium">Freshness</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,9 +90,9 @@ export function FetchStatusCard({ onFetchComplete }: { onFetchComplete?: () => v
                   const entry = bySeriesId[sid];
                   const dot = freshnessDot(entry?.lastFetchedAt ?? null);
                   return (
-                    <tr key={sid} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                      <td className="px-4 py-1.5 text-[#F8FAFC]">{sid}</td>
-                      <td className="px-4 py-1.5 text-[#94A3B8]">
+                    <tr key={sid} className="border-t border-[border-subtle]/50 hover:bg-[surface-overlay]/50">
+                      <td className="px-4 py-1.5 text-[text-primary]">{sid}</td>
+                      <td className="px-4 py-1.5 text-[text-secondary]">
                         {entry?.lastFetchedAt
                           ? formatDistanceToNow(new Date(entry.lastFetchedAt), { addSuffix: true })
                           : "Never"}
@@ -100,7 +100,7 @@ export function FetchStatusCard({ onFetchComplete }: { onFetchComplete?: () => v
                       <td className="px-4 py-1.5 text-center">
                         <span className="inline-flex items-center gap-1.5">
                           <span className={`inline-block h-2 w-2 rounded-full ${dot.color}`} />
-                          <span className="text-[#64748B]">{dot.label}</span>
+                          <span className="text-[text-muted]">{dot.label}</span>
                         </span>
                       </td>
                     </tr>
@@ -132,8 +132,8 @@ export function FetchStatusCard({ onFetchComplete }: { onFetchComplete?: () => v
               )}
             </div>
           ) : (
-            <p className="text-xs text-[#64748B] italic">
-              <button type="button" onClick={promptLogin} className="underline hover:text-[#94A3B8] transition-colors cursor-pointer">
+            <p className="text-xs text-[text-muted] italic">
+              <button type="button" onClick={promptLogin} className="underline hover:text-[text-secondary] transition-colors cursor-pointer">
                 Login
               </button>{" "}
               required to fetch data.

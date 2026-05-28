@@ -37,11 +37,11 @@ export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props)
   return (
     <div className="space-y-1">
       <div className="flex items-baseline justify-between gap-2">
-        <div className="text-[10px] uppercase tracking-wider text-[#64748B]">
+        <div className="text-[10px] uppercase tracking-wider text-text-muted">
           Score history · {days}d
         </div>
         {state.kind === "loaded" && (
-          <div className="text-[10px] font-mono text-[#94A3B8]">
+          <div className="text-[10px] font-mono text-text-secondary">
             {state.data.from} → {state.data.to}
           </div>
         )}
@@ -51,14 +51,14 @@ export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props)
         <button
           type="button"
           onClick={load}
-          className="bg-[#1E293B] hover:bg-[#334155] border border-[#334155] text-[#cbd5e1] hover:text-[#F8FAFC] text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+          className="bg-surface-overlay hover:bg-border-subtle border border-border-subtle text-text-faint hover:text-text-primary text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
         >
           Load trend
         </button>
       )}
 
       {state.kind === "loading" && (
-        <div className="flex items-center gap-2 text-[11px] text-[#64748B]">
+        <div className="flex items-center gap-2 text-[11px] text-text-muted">
           <Loader2 className="h-3 w-3 animate-spin" /> Loading trend…
         </div>
       )}
@@ -69,7 +69,7 @@ export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props)
           <button
             type="button"
             onClick={load}
-            className="text-[11px] text-[#94A3B8] hover:text-[#F8FAFC] underline underline-offset-2"
+            className="text-[11px] text-text-secondary hover:text-text-primary underline underline-offset-2"
           >
             retry
           </button>
@@ -84,7 +84,7 @@ export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props)
 function SparklineSvg({ data }: { data: ApiTrend }) {
   const points = data.points;
   if (points.length === 0) {
-    return <p className="text-[11px] text-[#64748B] italic">No trend data.</p>;
+    return <p className="text-[11px] text-text-muted italic">No trend data.</p>;
   }
 
   const xs = points.map(
@@ -116,7 +116,7 @@ function SparklineSvg({ data }: { data: ApiTrend }) {
     <>
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-        className="w-full h-14 block bg-[#0F172A] border border-[#334155] rounded-md"
+        className="w-full h-14 block bg-surface-base border border-border-subtle rounded-md"
         preserveAspectRatio="none"
       >
         {[1, 2, 3, 4, 5].map((s) => {
@@ -137,7 +137,7 @@ function SparklineSvg({ data }: { data: ApiTrend }) {
           <polyline key={i} points={seg} fill="none" stroke="#60A5FA" strokeWidth={1.25} />
         ))}
       </svg>
-      <div className="text-[10px] font-mono text-[#64748B]">
+      <div className="text-[10px] font-mono text-text-muted">
         latest {last.date} · score {last.score ?? "—"} ({last.bandLabel ?? "—"})
       </div>
     </>

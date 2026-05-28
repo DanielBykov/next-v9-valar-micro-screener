@@ -43,26 +43,26 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
   }, []);
 
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl">
+    <section className="bg-[surface-raised] border border-[border-subtle] rounded-xl">
       <button
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between p-6 cursor-pointer"
       >
         <div className="text-left">
           <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Data Coverage</h2>
-          <p className="text-xs text-[#94A3B8]">
+          <p className="text-xs text-[text-secondary]">
             Observation counts per series per month.
           </p>
         </div>
         <ChevronDown
-          className={`h-4 w-4 text-[#94A3B8] transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 text-[text-secondary] transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {!open ? null : (
       <div className="px-6 pb-6">
       {status === "loading" && (
-        <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
+        <div className="flex items-center gap-2 text-xs text-[text-secondary]">
           <Loader2 className="h-4 w-4 animate-spin" /> Loading coverage…
         </div>
       )}
@@ -72,20 +72,20 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
       )}
 
       {status === "done" && months.length === 0 && (
-        <span className="text-xs text-[#94A3B8] font-mono">No data found.</span>
+        <span className="text-xs text-[text-secondary] font-mono">No data found.</span>
       )}
 
       {status === "done" && months.length > 0 && (
-        <div className="border border-[#334155] rounded-lg overflow-hidden">
+        <div className="border border-[border-subtle] rounded-lg overflow-hidden">
           <div className="max-h-80 overflow-auto">
             <table className="w-full text-xs font-mono">
-              <thead className="bg-[#1E293B] sticky top-0 z-10">
+              <thead className="bg-[surface-overlay] sticky top-0 z-10">
                 <tr>
-                  <th className="text-left px-4 py-2 text-[#94A3B8] font-medium sticky left-0 bg-[#1E293B]">
+                  <th className="text-left px-4 py-2 text-[text-secondary] font-medium sticky left-0 bg-[surface-overlay]">
                     Month
                   </th>
                   {ALL_SERIES.map((sid) => (
-                    <th key={sid} className="text-center px-3 py-2 text-[#94A3B8] font-medium whitespace-nowrap">
+                    <th key={sid} className="text-center px-3 py-2 text-[text-secondary] font-medium whitespace-nowrap">
                       {sid}
                     </th>
                   ))}
@@ -93,9 +93,9 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
               </thead>
               <tbody>
                 {months.map((month) => (
-                  <tr key={month} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
+                  <tr key={month} className="border-t border-[border-subtle]/50 hover:bg-[surface-overlay]/50">
                     <td
-                      className={`px-4 py-1.5 text-[#F8FAFC] sticky left-0 bg-[#111827]${onMonthClick ? " cursor-pointer hover:text-amber-400 transition-colors" : ""}`}
+                      className={`px-4 py-1.5 text-[text-primary] sticky left-0 bg-[surface-raised]${onMonthClick ? " cursor-pointer hover:text-amber-400 transition-colors" : ""}`}
                       onClick={() => onMonthClick?.(month)}
                     >
                       {month}
@@ -108,7 +108,7 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
                           className={`text-center px-3 py-1.5 ${
                             count > 0
                               ? "text-emerald-400 bg-emerald-500/10"
-                              : "text-[#334155]"
+                              : "text-[border-subtle]"
                           }`}
                         >
                           {count || "—"}

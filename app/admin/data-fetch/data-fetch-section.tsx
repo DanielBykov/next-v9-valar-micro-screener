@@ -68,9 +68,9 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
   }
 
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+    <section className="bg-surface-raised border border-border-subtle rounded-xl p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Fetch Indicators</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">
+      <p className="text-xs text-text-secondary mb-5">
         Fetch FRED series for the <span className="text-amber-400 font-medium">{selected.key}</span> block
         ({selected.seriesPreview}) and save to database.
         Dates are optional — defaults to last 90 days.
@@ -80,11 +80,11 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
         <>
           <div className="flex flex-wrap items-end gap-4 mb-5">
             <div className="space-y-1.5">
-              <label className="text-xs text-[#94A3B8] font-mono">Block</label>
+              <label className="text-xs text-text-secondary font-mono">Block</label>
               <select
                 value={block}
                 onChange={(e) => setBlock(e.target.value)}
-                className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+                className="px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary hover:border-border-default focus:outline-none focus:border-border-default transition-colors [color-scheme:dark]"
               >
                 {BLOCK_OPTIONS.map((opt) => (
                   <option key={opt.key} value={opt.key}>
@@ -95,22 +95,22 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs text-[#94A3B8] font-mono">Start date</label>
+              <label className="text-xs text-text-secondary font-mono">Start date</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+                className="px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary hover:border-border-default focus:outline-none focus:border-border-default transition-colors [color-scheme:dark]"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs text-[#94A3B8] font-mono">End date</label>
+              <label className="text-xs text-text-secondary font-mono">End date</label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+                className="px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary hover:border-border-default focus:outline-none focus:border-border-default transition-colors [color-scheme:dark]"
               />
             </div>
 
@@ -136,8 +136,8 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
           )}
         </>
       ) : (
-        <p className="text-xs text-[#64748B] italic mb-5">
-          <button type="button" onClick={promptLogin} className="underline hover:text-[#94A3B8] transition-colors cursor-pointer">
+        <p className="text-xs text-text-muted italic mb-5">
+          <button type="button" onClick={promptLogin} className="underline hover:text-text-secondary transition-colors cursor-pointer">
             Login
           </button>
           {" "}required to fetch indicators.
@@ -145,19 +145,19 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
       )}
 
       {result && (
-        <div className="border border-[#334155] rounded-lg overflow-hidden">
+        <div className="border border-border-subtle rounded-lg overflow-hidden">
           <table className="w-full text-xs font-mono">
-            <thead className="bg-[#1E293B]">
+            <thead className="bg-surface-overlay">
               <tr>
-                <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Series</th>
-                <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Status</th>
-                <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">Rows stored</th>
+                <th className="text-left px-4 py-2 text-text-secondary font-medium">Series</th>
+                <th className="text-left px-4 py-2 text-text-secondary font-medium">Status</th>
+                <th className="text-right px-4 py-2 text-text-secondary font-medium">Rows stored</th>
               </tr>
             </thead>
             <tbody>
               {result.results.map((r) => (
-                <tr key={r.seriesId} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                  <td className="px-4 py-1.5 text-[#F8FAFC]">{r.seriesId}</td>
+                <tr key={r.seriesId} className="border-t border-border-subtle/50 hover:bg-surface-overlay/50">
+                  <td className="px-4 py-1.5 text-text-primary">{r.seriesId}</td>
                   <td className={`px-4 py-1.5 ${r.status === "ok" ? "text-emerald-400" : "text-red-400"}`}>
                     {r.status === "ok" ? "ok" : r.error ?? "error"}
                   </td>
@@ -165,9 +165,9 @@ export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => 
                 </tr>
               ))}
             </tbody>
-            <tfoot className="bg-[#1E293B]">
+            <tfoot className="bg-surface-overlay">
               <tr>
-                <td className="px-4 py-2 text-[#94A3B8] font-medium" colSpan={2}>
+                <td className="px-4 py-2 text-text-secondary font-medium" colSpan={2}>
                   {result.start} → {result.end}
                 </td>
                 <td className="px-4 py-2 text-right text-amber-400 font-medium">{result.totalStored} total</td>

@@ -33,12 +33,12 @@ export function BlockSidebar({ blocks, selectedBlockKey, onSelectBlock, liveBloc
             onClick={() => onSelectBlock(block.key)}
             className={`text-left px-3 py-2 rounded-md transition-colors ${
               isActive
-                ? "bg-[#1E293B] text-[#F8FAFC]"
-                : "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B]/50"
+                ? "bg-surface-overlay text-text-primary"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface-overlay/50"
             }`}
           >
             <div className="text-xs font-medium">{block.name}</div>
-            <div className="text-[10px] text-[#64748B] font-mono mt-0.5">
+            <div className="text-[10px] text-text-muted font-mono mt-0.5">
               {block.scorers.length} indicator{block.scorers.length === 1 ? "" : "s"}
               {live ? ` · ${live.blockScore}/20` : ""}
             </div>
@@ -49,10 +49,10 @@ export function BlockSidebar({ blocks, selectedBlockKey, onSelectBlock, liveBloc
       {planned.map((name) => (
         <div
           key={name}
-          className="px-3 py-2 rounded-md border border-dashed border-[#334155] opacity-40 cursor-default"
+          className="px-3 py-2 rounded-md border border-dashed border-border-subtle opacity-40 cursor-default"
         >
-          <div className="text-xs font-medium text-[#64748B]">{name}</div>
-          <div className="text-[10px] text-[#475569] font-mono mt-0.5">coming soon</div>
+          <div className="text-xs font-medium text-text-muted">{name}</div>
+          <div className="text-[10px] text-border-default font-mono mt-0.5">coming soon</div>
         </div>
       ))}
     </nav>

@@ -9,10 +9,10 @@ function CustomTrendTooltip({ active, payload, label }: any) {
   const score = payload[0].value;
   const regime = getRegimeForScore(score);
   return (
-    <div className="bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-3 shadow-xl">
-      <p className="text-xs text-[#94A3B8] mb-1 font-mono">{label}</p>
-      <p className="text-lg font-semibold text-[#F8FAFC] font-mono">{score}</p>
-      <p className="text-xs text-[#94A3B8] mt-1">{regime}</p>
+    <div className="bg-surface-overlay border border-border-subtle rounded-lg px-4 py-3 shadow-xl">
+      <p className="text-xs text-text-secondary mb-1 font-mono">{label}</p>
+      <p className="text-lg font-semibold text-text-primary font-mono">{score}</p>
+      <p className="text-xs text-text-secondary mt-1">{regime}</p>
     </div>
   );
 }
@@ -20,25 +20,25 @@ function CustomTrendTooltip({ active, payload, label }: any) {
 export function TrendChart({ trendData }: { trendData: DashboardData["trend"] }) {
   if (!trendData || trendData.length === 0) {
     return (
-      <div className="bg-[#111827] border border-dashed border-[#334155] rounded-xl overflow-hidden opacity-70">
-        <div className="px-6 py-4 border-b border-[#334155] flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-[#94A3B8] uppercase tracking-wider">Macro Pulse Trend — 12 Months</h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#475569] text-[#94A3B8] bg-[#0F172A]/60">
+      <div className="bg-surface-raised border border-dashed border-border-subtle rounded-xl overflow-hidden opacity-70">
+        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Macro Pulse Trend — 12 Months</h3>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-border-default text-text-secondary bg-surface-base/60">
             Planned
           </span>
         </div>
         <div className="p-6 h-[320px] flex items-center justify-center">
-          <p className="text-xs text-[#94A3B8] italic">Trend will activate once historical scoring lands.</p>
+          <p className="text-xs text-text-secondary italic">Trend will activate once historical scoring lands.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#111827] border border-[#334155] rounded-xl overflow-hidden">
-      <div className="px-6 py-4 border-b border-[#334155] flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-[#F8FAFC] uppercase tracking-wider">Macro Pulse Trend — 12 Months</h3>
-        <span className="text-[10px] font-mono text-[#94A3B8]">Feb 2025 — Feb 2026</span>
+    <div className="bg-surface-raised border border-border-subtle rounded-xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider">Macro Pulse Trend — 12 Months</h3>
+        <span className="text-[10px] font-mono text-text-secondary">Feb 2025 — Feb 2026</span>
       </div>
       <div className="p-6">
         <div className="h-[320px] w-full">

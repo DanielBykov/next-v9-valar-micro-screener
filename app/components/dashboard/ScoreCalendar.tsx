@@ -72,12 +72,12 @@ export function ScoreCalendar({
           ${isSelected
             ? "bg-amber-600/30 border border-amber-500/50 ring-1 ring-amber-500/30"
             : hasData
-              ? "hover:bg-[#1E293B] border border-transparent hover:border-[#334155] cursor-pointer"
+              ? "hover:bg-surface-overlay border border-transparent hover:border-border-subtle cursor-pointer"
               : "opacity-30 cursor-default border border-transparent"
           }
         `}
       >
-        <span className={isSelected ? "text-[12px] text-amber-300 font-semibold" : "text-[#94A3B8]"}>
+        <span className={isSelected ? "text-[12px] text-amber-300 font-semibold" : "text-text-secondary"}>
           {day}
         </span>
         {hasData && (
@@ -97,10 +97,10 @@ export function ScoreCalendar({
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="h-auto px-3 py-1.5 text-xs text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] font-mono gap-2 cursor-pointer"
+          className="h-auto px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-overlay font-mono gap-2 cursor-pointer"
         >
           {isLoading ? (
-            <Activity className="h-3.5 w-3.5 animate-pulse text-[#3B82F6]" />
+            <Activity className="h-3.5 w-3.5 animate-pulse text-accent-blue" />
           ) : (
             <Calendar className="h-3.5 w-3.5" />
           )}
@@ -110,21 +110,21 @@ export function ScoreCalendar({
       <PopoverContent
         align="start"
         sideOffset={8}
-        className="bg-[#111827] border-[#334155] p-4 w-auto"
+        className="bg-surface-raised border-border-subtle p-4 w-auto"
       >
         <div className="flex items-center justify-between mb-3">
-          <Button variant="ghost" size="sm" onClick={prevMonth} className="h-7 w-7 p-0 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
+          <Button variant="ghost" size="sm" onClick={prevMonth} className="h-7 w-7 p-0 text-text-secondary hover:text-text-primary hover:bg-surface-overlay cursor-pointer">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <h3 className="text-sm font-semibold text-[#F8FAFC] font-mono">{monthLabel}</h3>
-          <Button variant="ghost" size="sm" onClick={nextMonth} className="h-7 w-7 p-0 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
+          <h3 className="text-sm font-semibold text-text-primary font-mono">{monthLabel}</h3>
+          <Button variant="ghost" size="sm" onClick={nextMonth} className="h-7 w-7 p-0 text-text-secondary hover:text-text-primary hover:bg-surface-overlay cursor-pointer">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
 
         <div className="grid grid-cols-7 gap-0.5 mb-1">
           {WEEKDAYS.map((w) => (
-            <div key={w} className="h-11 w-11 flex items-center justify-center text-[10px] text-[#94A3B8] font-mono">
+            <div key={w} className="h-11 w-11 flex items-center justify-center text-[10px] text-text-secondary font-mono">
               {w}
             </div>
           ))}
@@ -133,8 +133,8 @@ export function ScoreCalendar({
           {cells}
         </div>
         {isLoading && (
-          <div className="mt-3 pt-3 border-t border-[#334155] flex items-center gap-2 text-[10px] text-[#94A3B8] font-mono">
-            <Activity className="h-3 w-3 animate-pulse text-[#3B82F6]" />
+          <div className="mt-3 pt-3 border-t border-border-subtle flex items-center gap-2 text-[10px] text-text-secondary font-mono">
+            <Activity className="h-3 w-3 animate-pulse text-accent-blue" />
             <span>Loading available dates…</span>
           </div>
         )}

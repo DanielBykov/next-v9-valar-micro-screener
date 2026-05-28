@@ -16,7 +16,7 @@ export function LogoutButton() {
     <button
       type="button"
       onClick={handleLogout}
-      className="ml-auto flex items-center gap-1.5 text-xs text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
+      className="ml-auto flex items-center gap-1.5 text-xs text-[text-secondary] hover:text-[text-primary] transition-colors cursor-pointer"
     >
       <LogOut className="h-3.5 w-3.5" />
       Logout

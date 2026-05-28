@@ -23,9 +23,9 @@ export function MockDataSection() {
   }
 
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6">
+    <section className="bg-surface-raised border border-border-subtle rounded-xl p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wider mb-1">Mock Data</h2>
-      <p className="text-xs text-[#94A3B8] mb-5">Manage mock snapshots, blocks, metrics, and trend data used for development.</p>
+      <p className="text-xs text-text-secondary mb-5">Manage mock snapshots, blocks, metrics, and trend data used for development.</p>
 
       {isAuthed ? (
         <div className="flex items-center gap-4">
@@ -50,8 +50,8 @@ export function MockDataSection() {
           )}
         </div>
       ) : (
-        <p className="text-xs text-[#64748B] italic">
-          <button type="button" onClick={promptLogin} className="underline hover:text-[#94A3B8] transition-colors cursor-pointer">
+        <p className="text-xs text-text-muted italic">
+          <button type="button" onClick={promptLogin} className="underline hover:text-text-secondary transition-colors cursor-pointer">
             Login
           </button>
           {" "}required to manage mock data.

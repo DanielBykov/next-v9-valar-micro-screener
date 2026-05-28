@@ -1,10 +1,10 @@
 function Pulse({ className }: { className: string }) {
-  return <div className={`animate-pulse rounded bg-[#1E293B] ${className}`} />;
+  return <div className={`animate-pulse rounded bg-surface-overlay ${className}`} />;
 }
 
 export function ScoreGaugeSkeleton() {
   return (
-    <div className="lg:col-span-5 bg-[#111827] border border-[#334155] rounded-xl p-8 flex flex-col items-center relative">
+    <div className="lg:col-span-5 bg-surface-raised border border-border-subtle rounded-xl p-8 flex flex-col items-center relative">
       <Pulse className="h-3 w-32 mb-1" />
       {/* gauge arc placeholder */}
       <div className="relative h-44 w-full flex items-end justify-center mt-2">
@@ -26,15 +26,15 @@ export function ScoreGaugeSkeleton() {
 
 export function SnapshotStatsSkeleton() {
   return (
-    <div className="lg:col-span-7 bg-[#111827] border border-[#334155] rounded-xl overflow-hidden flex flex-col">
+    <div className="lg:col-span-7 bg-surface-raised border border-border-subtle rounded-xl overflow-hidden flex flex-col">
       {/* header row */}
-      <div className="px-6 py-4 border-b border-[#334155] flex items-center gap-2">
+      <div className="px-6 py-4 border-b border-border-subtle flex items-center gap-2">
         <Pulse className="h-4 w-4" />
         <Pulse className="h-4 w-40" />
       </div>
       {/* stat rows */}
       <div className="flex-1 flex flex-col">
-        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#334155]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border-subtle">
           {[0, 1].map((i) => (
             <div key={i} className="px-6 py-5 flex justify-between items-center">
               <Pulse className="h-4 w-24" />
@@ -42,7 +42,7 @@ export function SnapshotStatsSkeleton() {
             </div>
           ))}
         </div>
-        <div className="border-t border-[#334155] grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#334155]">
+        <div className="border-t border-border-subtle grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border-subtle">
           {[0, 1].map((i) => (
             <div key={i} className="px-6 py-5 flex justify-between items-center">
               <Pulse className="h-4 w-24" />
@@ -51,7 +51,7 @@ export function SnapshotStatsSkeleton() {
           ))}
         </div>
         {/* interpretation */}
-        <div className="border-t border-[#334155] px-6 py-4 flex-1 flex flex-col gap-2">
+        <div className="border-t border-border-subtle px-6 py-4 flex-1 flex flex-col gap-2">
           <Pulse className="h-3 w-full" />
           <Pulse className="h-3 w-5/6" />
           <Pulse className="h-3 w-4/6" />

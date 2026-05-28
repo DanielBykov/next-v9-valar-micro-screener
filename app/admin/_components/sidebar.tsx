@@ -26,7 +26,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`${collapsed ? "w-12" : "w-56"} shrink-0 border-r border-[#334155] bg-[#111827] min-h-[calc(100vh-3.5rem)] transition-[width] duration-200`}
+      className={`${collapsed ? "w-12" : "w-56"} shrink-0 border-r border-[border-subtle] bg-[surface-raised] min-h-[calc(100vh-3.5rem)] transition-[width] duration-200`}
     >
       <nav className="p-2 space-y-0.5">
         {NAV.map((item) => {
@@ -43,8 +43,8 @@ export function Sidebar() {
               title={collapsed ? item.label : undefined}
               className={`flex items-center gap-2.5 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
                 isActive
-                  ? "bg-[#1E293B] text-[#F8FAFC]"
-                  : "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B]/50"
+                  ? "bg-[surface-overlay] text-[text-primary]"
+                  : "text-[text-secondary] hover:text-[text-primary] hover:bg-[surface-overlay]/50"
               }`}
             >
               <Icon className="h-3.5 w-3.5 shrink-0" />
@@ -54,10 +54,10 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="px-2 pt-1 border-t border-[#334155]/50">
+      <div className="px-2 pt-1 border-t border-[border-subtle]/50">
         <button
           onClick={() => setCollapsed((v) => !v)}
-          className="w-full flex items-center justify-center px-2 py-2 text-[#475569] hover:text-[#94A3B8] rounded-md hover:bg-[#1E293B]/50 transition-colors"
+          className="w-full flex items-center justify-center px-2 py-2 text-[border-default] hover:text-[text-secondary] rounded-md hover:bg-[surface-overlay]/50 transition-colors"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? <PanelLeftOpen className="h-3.5 w-3.5" /> : <PanelLeftClose className="h-3.5 w-3.5" />}

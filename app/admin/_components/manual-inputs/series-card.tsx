@@ -110,22 +110,22 @@ export function SeriesCard({
   }
 
   return (
-    <section className="bg-[#111827] border border-[#334155] rounded-xl p-6 space-y-4">
+    <section className="bg-surface-raised border border-border-subtle rounded-xl p-6 space-y-4">
       <header className="space-y-1">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F8FAFC]">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-text-primary">
             {seriesId}
           </h2>
-          <span className="text-xs text-[#64748B] font-mono">{entries.length} entries</span>
+          <span className="text-xs text-text-muted font-mono">{entries.length} entries</span>
         </div>
         {consumers.length > 0 && (
-          <p className="text-xs text-[#94A3B8]">
+          <p className="text-xs text-text-secondary">
             Consumed by{" "}
             {consumers.map((c, i) => (
               <span key={c.indicatorKey}>
                 {i > 0 && ", "}
                 <span className="text-amber-400 font-mono">{c.indicatorName}</span>
-                <span className="text-[#64748B]"> ({c.blockName})</span>
+                <span className="text-text-muted"> ({c.blockName})</span>
               </span>
             ))}
           </p>
@@ -135,32 +135,32 @@ export function SeriesCard({
       {isAuthed ? (
         <div className="flex flex-wrap items-end gap-3">
           <div className="space-y-1.5">
-            <label className="text-xs text-[#94A3B8] font-mono">Observation date</label>
+            <label className="text-xs text-text-secondary font-mono">Observation date</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors [color-scheme:dark]"
+              className="px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary hover:border-border-default focus:outline-none focus:border-border-default transition-colors [color-scheme:dark]"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-[#94A3B8] font-mono">Value</label>
+            <label className="text-xs text-text-secondary font-mono">Value</label>
             <input
               type="number"
               step="any"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              className="w-40 px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors"
+              className="w-40 px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary hover:border-border-default focus:outline-none focus:border-border-default transition-colors"
             />
           </div>
           <div className="space-y-1.5 flex-1 min-w-[12rem]">
-            <label className="text-xs text-[#94A3B8] font-mono">Note (optional)</label>
+            <label className="text-xs text-text-secondary font-mono">Note (optional)</label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. April 2026 release"
-              className="w-full px-3 py-2 text-xs font-mono rounded-lg border border-[#334155] bg-[#0F172A] text-[#F8FAFC] hover:border-[#475569] focus:outline-none focus:border-[#475569] transition-colors"
+              className="w-full px-3 py-2 text-xs font-mono rounded-lg border border-border-subtle bg-surface-base text-text-primary hover:border-border-default focus:outline-none focus:border-border-default transition-colors"
             />
           </div>
           <button
@@ -173,11 +173,11 @@ export function SeriesCard({
           </button>
         </div>
       ) : (
-        <p className="text-xs text-[#64748B] italic">
+        <p className="text-xs text-text-muted italic">
           <button
             type="button"
             onClick={promptLogin}
-            className="underline hover:text-[#94A3B8] transition-colors cursor-pointer"
+            className="underline hover:text-text-secondary transition-colors cursor-pointer"
           >
             Login
           </button>{" "}
@@ -189,35 +189,35 @@ export function SeriesCard({
         <p className="text-xs text-red-400 font-mono">{error}</p>
       )}
 
-      <div className="border border-[#334155] rounded-lg overflow-hidden">
+      <div className="border border-border-subtle rounded-lg overflow-hidden">
         <table className="w-full text-xs font-mono">
-          <thead className="bg-[#1E293B]">
+          <thead className="bg-surface-overlay">
             <tr>
-              <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Date</th>
-              <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">Value</th>
-              <th className="text-left px-4 py-2 text-[#94A3B8] font-medium">Note</th>
-              <th className="text-right px-4 py-2 text-[#94A3B8] font-medium">Updated</th>
+              <th className="text-left px-4 py-2 text-text-secondary font-medium">Date</th>
+              <th className="text-right px-4 py-2 text-text-secondary font-medium">Value</th>
+              <th className="text-left px-4 py-2 text-text-secondary font-medium">Note</th>
+              <th className="text-right px-4 py-2 text-text-secondary font-medium">Updated</th>
               <th className="px-4 py-2"></th>
             </tr>
           </thead>
           <tbody>
             {entries.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-3 text-center text-[#64748B] italic">
+                <td colSpan={5} className="px-4 py-3 text-center text-text-muted italic">
                   No entries yet
                 </td>
               </tr>
             ) : (
               entries.map((e) => (
-                <tr key={e.id} className="border-t border-[#334155]/50 hover:bg-[#1E293B]/50">
-                  <td className="px-4 py-1.5 text-[#F8FAFC]">{e.observationDate}</td>
+                <tr key={e.id} className="border-t border-border-subtle/50 hover:bg-surface-overlay/50">
+                  <td className="px-4 py-1.5 text-text-primary">{e.observationDate}</td>
                   <td className="px-4 py-1.5 text-right text-amber-400">
                     {Number(e.value).toLocaleString()}
                   </td>
-                  <td className="px-4 py-1.5 text-[#94A3B8] truncate max-w-xs">
+                  <td className="px-4 py-1.5 text-text-secondary truncate max-w-xs">
                     {e.note ?? ""}
                   </td>
-                  <td className="px-4 py-1.5 text-right text-[#64748B]">
+                  <td className="px-4 py-1.5 text-right text-text-muted">
                     {new Date(e.updatedAt).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-1.5 text-right">
@@ -225,7 +225,7 @@ export function SeriesCard({
                       <button
                         onClick={() => handleDelete(e)}
                         disabled={busy}
-                        className="text-[#64748B] hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
+                        className="text-text-muted hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
                         title="Delete"
                       >
                         <Trash2 className="h-3.5 w-3.5" />

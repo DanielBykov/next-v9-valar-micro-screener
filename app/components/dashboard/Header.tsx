@@ -16,12 +16,12 @@ export function Header({
   onSelectDate: (date: Date) => void;
 }) {
   return (
-    <header className="border-b border-[#334155] bg-[#111827]">
+    <header className="border-b border-border-subtle bg-surface-raised">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-sm font-semibold tracking-wide text-[#F8FAFC]">VALAR</span>
-          <span className="text-xs text-[#94A3B8] font-mono">Macro Pulse Intelligence</span>
+          <span className="text-sm font-semibold tracking-wide text-text-primary">VALAR</span>
+          <span className="text-xs text-text-secondary font-mono">Macro Pulse Intelligence</span>
         </div>
         <div className="flex items-center gap-2">
           <ScoreCalendar
@@ -31,13 +31,13 @@ export function Header({
             onSelectDate={onSelectDate}
           />
           <Link href="/mock-dashboard">
-            <Button variant="ghost" size="sm" className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-text-secondary hover:text-text-primary hover:bg-surface-overlay cursor-pointer">
               <Activity className="h-3.5 w-3.5" />
               <span className="text-xs ml-1.5">Mock Data</span>
             </Button>
           </Link>
           <Link href="/admin">
-            <Button variant="ghost" size="sm" className="h-8 px-2 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] cursor-pointer">
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-text-secondary hover:text-text-primary hover:bg-surface-overlay cursor-pointer">
               <Settings className="h-3.5 w-3.5" />
               <span className="text-xs ml-1.5">Admin</span>
             </Button>
