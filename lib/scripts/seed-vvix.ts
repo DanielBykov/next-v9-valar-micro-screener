@@ -5,7 +5,7 @@
  * Idempotent: re-runs upsert on the (series_id, observation_date) unique index.
  *
  * Usage:
- *   tsx lib/scripts/seed-vvix.ts
+ *    node --env-file=.env ./node_modules/.bin/tsx lib/scripts/seed-vvix.ts
  * (or whatever runner the project uses for TS scripts — package.json doesn't
  *  yet declare a script entry; add one if you'll re-run this regularly.)
  *

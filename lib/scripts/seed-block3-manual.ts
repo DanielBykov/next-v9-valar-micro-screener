@@ -9,7 +9,7 @@
  *   - S5TH_PCT_ABOVE_200DMA  (3.5)  pct_above_200dma (raw %)
  *
  * Usage:
- *   tsx lib/scripts/seed-block3-manual.ts
+ *   node --env-file=.env ./node_modules/.bin/tsx lib/scripts/seed-block3-manual.ts
  */
 import fs from "node:fs";
 import path from "node:path";
