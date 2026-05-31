@@ -3,7 +3,6 @@
 import type { ApiBlock, ApiBlockResult } from "./types";
 
 const PLANNED_BLOCKS = [
-  "Sentiment & Volatility",
   "Commodities & Global Flow",
   "Business Cycle & Rotation",
   "Narrative & Political Risk",

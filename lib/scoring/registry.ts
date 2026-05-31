@@ -1,3 +1,4 @@
+import { commoditiesGlobalBlock } from "@/lib/scoring/blocks/commodities-global";
 import { inflationLaborBlock } from "@/lib/scoring/blocks/inflation-labor";
 import { ratesBlock } from "@/lib/scoring/blocks/rates";
 import { sentimentRiskBlock } from "@/lib/scoring/blocks/sentiment-risk";
@@ -12,6 +13,7 @@ export const BLOCKS: BlockDefinition[] = [
   ratesBlock,
   inflationLaborBlock,
   sentimentRiskBlock,
+  commoditiesGlobalBlock,
 ];
 
 export function getBlockByKey(key: string): BlockDefinition | undefined {

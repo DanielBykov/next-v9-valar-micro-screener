@@ -1,4 +1,8 @@
-export type BlockKey = "rates" | "inflation_labor" | "sentiment_risk";
+export type BlockKey =
+  | "rates"
+  | "inflation_labor"
+  | "sentiment_risk"
+  | "commodities_global";
 
 export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
   rates: ["DFF", "T10Y2Y", "WALCL", "DGS10", "T10YIE", "DFEDTARU"],
@@ -14,6 +18,15 @@ export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
     "VIXCLS",        // CBOE VIX (30-day implied vol on S&P 500), daily
     // VVIX is not on FRED — bulk-seeded into indicator_observations via
     // lib/scripts/seed-vvix.ts; excluded here so the FRED fetcher skips it.
+  ],
+  commodities_global: [
+    "DCOILWTICO",    // Crude Oil WTI spot, USD/bbl, daily
+    "DTWEXBGS",      // Nominal Broad U.S. Dollar Index, daily
+    "PCOPPUSDM",     // LME Copper average, USD/MT, monthly
+    "SOFR",          // Secured Overnight Financing Rate, %, daily
+    "IORB",          // Interest on Reserve Balances, %, daily (since Jul 2021)
+    // GOLD_SPOT: not on FRED — bulk-seeded via lib/scripts/seed-gold.ts
+    // GLOBAL_MFG_PMI: manual input via /admin/manual-inputs (paywalled source)
   ],
 };
 
