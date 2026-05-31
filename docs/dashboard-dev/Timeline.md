@@ -81,7 +81,11 @@
 
 ## May 29, 2026
 - **Dashboard: raw value display and loading skeletons**
-  Added raw indicator values (e.g. actual rate or index level) next to metric names on dashboard block cards, with a `formatRawValue` utility that handles different units. Extracted loading skeleton components into a dedicated `Skeletons.tsx` module and streamlined the main dashboard component.
+Added raw indicator values (e.g. actual rate or index level) next to metric names on dashboard block cards, with a `formatRawValue` utility that handles different units. Extracted loading skeleton components into a dedicated `Skeletons.tsx` module and streamlined the main dashboard component.
 
 - **Tailwind color system refactoring**
   Replaced hard-coded Tailwind color classes with CSS custom-property-based design tokens across the entire app — 36 files spanning admin pages, scoring engine UI, dashboard components, login page, and `globals.css`. No visual changes; the refactor centralizes the color palette so future theming and dark-mode support require changes in one place.
+
+## May 31, 2026
+- **Block-3 Sentiment & Risk + six sentiment scorers + seed scripts** 
+Implemented Block 3 (Sentiment & Risk) end-to-end with six indicators: VIX (30% weight), Put/Call Ratio (20%), Market Breadth (20%), AAII Spread (15%), VVIX (10%), and Fear & Greed Index (5%). Block 3 weight is 10% of total Macro Pulse Score; five-tier regime map ranges from "Extreme Stress / Panic" (contrarian buy zone) to "Extreme Complacency / Euphoria" (correction warning). VIX sourced from FRED; VVIX bulk-seeded from CBOE history via new seed script; remaining indicators sourced from manual inputs (Put/Call, breadth, AAII, Fear/Greed). Added seed scripts for VVIX historical data and Block 3 manual input templates. Updated FRED series catalog and scoring registry to include the new block.
