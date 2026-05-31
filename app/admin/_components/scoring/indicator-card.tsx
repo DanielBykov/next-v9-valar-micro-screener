@@ -13,6 +13,8 @@ import { TryItPanel } from "./try-it-panel";
 type Props = {
   scorer: ApiScorer;
   liveResult: ApiScoringResult | null;
+  /** ISO YYYY-MM-DD — the date selected in the page header. */
+  asOfDate: string;
 };
 
 function scoreBadgeClasses(score: number) {
@@ -22,7 +24,7 @@ function scoreBadgeClasses(score: number) {
   return "bg-red-500/10 text-red-400 border-red-500/20";
 }
 
-export function IndicatorCard({ scorer, liveResult }: Props) {
+export function IndicatorCard({ scorer, liveResult, asOfDate }: Props) {
   const initialValues = liveResult?.inputsUsed
     ? Object.fromEntries(liveResult.inputsUsed.map((u) => [u.seriesId, Number(u.value)]))
     : undefined;
@@ -108,10 +110,10 @@ export function IndicatorCard({ scorer, liveResult }: Props) {
       </div>
 
       {/* Sparkline */}
-      <IndicatorSparkline indicatorKey={scorer.key} />
+      <IndicatorSparkline indicatorKey={scorer.key} asOfDate={asOfDate} />
 
       {/* Try it */}
-      <TryItPanel scorer={scorer} initialValues={initialValues} />
+      <TryItPanel scorer={scorer} initialValues={initialValues} asOfDate={asOfDate} />
     </section>
   );
 }

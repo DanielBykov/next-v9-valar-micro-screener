@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { ApiTrend } from "./types";
 
@@ -12,6 +12,8 @@ const PAD = 4;
 type Props = {
   indicatorKey: string;
   days?: number;
+  /** ISO YYYY-MM-DD anchor — trend ends on this date. */
+  asOfDate: string;
 };
 
 type State =
@@ -20,19 +22,33 @@ type State =
   | { kind: "error"; message: string }
   | { kind: "loaded"; data: ApiTrend };
 
-export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS }: Props) {
+export function IndicatorSparkline({ indicatorKey, days = DEFAULT_DAYS, asOfDate }: Props) {
   const [state, setState] = useState<State>({ kind: "idle" });
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
-  const load = () => {
+  const load = useCallback(() => {
     setState({ kind: "loading" });
-    fetch(`/api/admin/engine/trend?indicator=${encodeURIComponent(indicatorKey)}&days=${days}`)
+    fetch(
+      `/api/admin/engine/trend?indicator=${encodeURIComponent(indicatorKey)}&days=${days}&date=${encodeURIComponent(asOfDate)}`,
+    )
       .then((r) => {
         if (!r.ok) throw new Error(`Trend request failed (${r.status})`);
         return r.json();
       })
       .then((data: ApiTrend) => setState({ kind: "loaded", data }))
       .catch((err: Error) => setState({ kind: "error", message: err.message }));
-  };
+  }, [indicatorKey, days, asOfDate]);
+
+  // If the trend was already loaded, automatically refetch on date change so the
+  // chart stays aligned with the page's selected date. If still idle, leave it
+  // alone — the user hasn't opted in to loading this trend yet.
+  useEffect(() => {
+    if (stateRef.current.kind === "loaded" || stateRef.current.kind === "error") {
+      load();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asOfDate]);
 
   return (
     <div className="space-y-1">

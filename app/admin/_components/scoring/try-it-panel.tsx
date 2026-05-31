@@ -9,6 +9,8 @@ type Props = {
   scorer: ApiScorer;
   /** Optional seed values (e.g., the live result) to pre-populate inputs. */
   initialValues?: Record<string, number>;
+  /** ISO YYYY-MM-DD — the asOfDate used when running compute(). */
+  asOfDate: string;
 };
 
 /**
@@ -17,7 +19,7 @@ type Props = {
  * band thresholds, formula traces, and warnings come straight from the
  * production code — no API round-trip.
  */
-export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
+export function TryItPanel({ scorer: scorerMeta, initialValues, asOfDate }: Props) {
   const runtimeScorer = useMemo(() => getScorerByKey(scorerMeta.key), [scorerMeta.key]);
 
   const [values, setValues] = useState<Record<string, string>>(() => {
@@ -42,8 +44,8 @@ export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
   const onRun = () => {
     setError(null);
     try {
-      const today = new Date();
-      const isoDate = today.toISOString().slice(0, 10);
+      const asOf = new Date(`${asOfDate}T00:00:00Z`);
+      const fetchedAt = new Date();
       const observations: Record<string, IndicatorObservation[]> = {};
       for (const input of scorerMeta.inputs) {
         const raw = values[input.seriesId];
@@ -59,15 +61,15 @@ export function TryItPanel({ scorer: scorerMeta, initialValues }: Props) {
           {
             id: -1,
             seriesId: input.seriesId,
-            observationDate: isoDate,
+            observationDate: asOfDate,
             // numeric() in drizzle types as string; scorers cast via Number()
             value: String(num),
             source: "try-it",
-            fetchedAt: today,
+            fetchedAt,
           },
         ];
       }
-      const computed = runtimeScorer.compute({ asOfDate: today, observations });
+      const computed = runtimeScorer.compute({ asOfDate: asOf, observations });
       setResult(computed as ApiScoringResult);
     } catch (err: any) {
       setError(err?.message ?? "Compute failed");

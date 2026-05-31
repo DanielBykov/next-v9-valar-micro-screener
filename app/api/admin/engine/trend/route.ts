@@ -7,13 +7,15 @@ import { getBlockByKey, getScorerByKey } from "@/lib/scoring/registry";
 const MIN_DAYS = 1;
 const MAX_DAYS = 1000;
 const DEFAULT_DAYS = 400;
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
- * GET /api/admin/engine/trend?indicator=KEY&days=400
+ * GET /api/admin/engine/trend?indicator=KEY&days=400&date=YYYY-MM-DD
  *
  * Returns the historical score series for a single indicator: one data point
- * per calendar day going back `days` from today. Each point includes the
- * computed score and the raw value at that date.
+ * per calendar day going back `days` from the anchor date (`date`, defaults
+ * to today). Each point includes the computed score and the raw value at
+ * that date.
  *
  * Only the block that owns the indicator is computed — not the full snapshot.
  * Observations for the entire window are loaded in a single DB query, then
@@ -22,6 +24,7 @@ const DEFAULT_DAYS = 400;
 export async function GET(request: NextRequest) {
   const indicatorKey = request.nextUrl.searchParams.get("indicator");
   const daysParam = request.nextUrl.searchParams.get("days");
+  const dateParam = request.nextUrl.searchParams.get("date");
 
   if (!indicatorKey) {
     return NextResponse.json(
@@ -58,11 +61,26 @@ export async function GET(request: NextRequest) {
     days = parsed;
   }
 
+  let anchor: Date;
+  if (dateParam) {
+    if (!ISO_DATE_RE.test(dateParam)) {
+      return NextResponse.json(
+        { message: "date must be in YYYY-MM-DD format" },
+        { status: 400 },
+      );
+    }
+    anchor = new Date(`${dateParam}T00:00:00Z`);
+    if (Number.isNaN(anchor.getTime())) {
+      return NextResponse.json({ message: "Invalid date" }, { status: 400 });
+    }
+  } else {
+    anchor = new Date();
+  }
+
   try {
-    const today = new Date();
     const dates: Date[] = [];
     for (let i = days - 1; i >= 0; i--) {
-      dates.push(daysAgo(today, i));
+      dates.push(daysAgo(anchor, i));
     }
 
     const observations = await loadObservationsForBlockOverRange(

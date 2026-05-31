@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { BlockSidebar } from "./block-sidebar";
 import { BlockSummary } from "./block-summary";
 import { IndicatorCard } from "./indicator-card";
+import { EngineDatePicker } from "./engine-date-picker";
 import type {
   ApiBlock,
   ApiScoringResult,
@@ -17,9 +19,49 @@ type Props = {
   liveError: string | null;
 };
 
-export function EnginePageShell({ metadata, live, liveError }: Props) {
+export function EnginePageShell({ metadata, live: initialLive, liveError: initialLiveError }: Props) {
   const firstBlock = metadata.blocks[0]?.key ?? null;
   const [selectedBlockKey, setSelectedBlockKey] = useState<string | null>(firstBlock);
+
+  // Date state: defaults to whatever the server snapshot reports (today).
+  // Falls back to today's ISO if server failed to produce a snapshot.
+  const initialIso = initialLive?.asOfDate ?? new Date().toISOString().slice(0, 10);
+  const [selectedDate, setSelectedDate] = useState<string>(initialIso);
+  const [live, setLive] = useState<ApiSnapshotResult | null>(initialLive);
+  const [liveError, setLiveError] = useState<string | null>(initialLiveError);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Refetch whenever selectedDate changes (skip the initial render — server already
+  // provided that snapshot).
+  useEffect(() => {
+    if (selectedDate === initialIso) return;
+    let cancelled = false;
+    setIsLoading(true);
+    setLiveError(null);
+    fetch(`/api/admin/engine/live?date=${encodeURIComponent(selectedDate)}`)
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          throw new Error(body?.message ?? `Request failed (${r.status})`);
+        }
+        return r.json() as Promise<ApiSnapshotResult>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setLive(data);
+      })
+      .catch((err: Error) => {
+        if (cancelled) return;
+        setLive(null);
+        setLiveError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDate, initialIso]);
 
   const selectedBlock: ApiBlock | null = useMemo(
     () => metadata.blocks.find((b) => b.key === selectedBlockKey) ?? null,
@@ -49,11 +91,24 @@ export function EnginePageShell({ metadata, live, liveError }: Props) {
           Live, code-driven documentation of every block and indicator. Same classes
           power the dashboard at <code className="font-mono text-text-faint">/api/dashboard?mode=engine</code>.
         </p>
-        {live && (
-          <p className="text-[11px] text-text-muted font-mono mt-2">
-            As of {live.asOfDate} · total {live.totalScore}/120 · {live.regime}
-          </p>
-        )}
+        <div className="mt-2 flex items-center gap-2">
+          <span className="text-[11px] text-text-muted font-mono">As of</span>
+          <EngineDatePicker
+            value={selectedDate}
+            onChange={setSelectedDate}
+            disabled={isLoading}
+          />
+          {live && !isLoading && (
+            <span className="text-[11px] text-text-muted font-mono">
+              · total {live.totalScore}/120 · {live.regime}
+            </span>
+          )}
+          {isLoading && (
+            <span className="inline-flex items-center gap-1 text-[11px] text-text-muted font-mono">
+              <Loader2 className="h-3 w-3 animate-spin" /> Loading…
+            </span>
+          )}
+        </div>
         {liveError && (
           <p className="text-[11px] text-red-400 font-mono mt-2">Live: {liveError}</p>
         )}
@@ -75,6 +130,7 @@ export function EnginePageShell({ metadata, live, liveError }: Props) {
                 key={scorer.key}
                 scorer={scorer}
                 liveResult={liveByIndicator.get(scorer.key) ?? null}
+                asOfDate={selectedDate}
               />
             ))}
           </div>
