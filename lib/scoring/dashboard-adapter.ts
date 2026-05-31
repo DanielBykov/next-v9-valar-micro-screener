@@ -9,7 +9,6 @@ import { getScorerByKey } from "@/lib/scoring/registry";
  * intended six-block design.
  */
 export const PLANNED_BLOCK_NAMES = [
-  "Sentiment & Volatility",
   "Commodities & Global Flow",
   "Business Cycle & Rotation",
   "Narrative & Political Risk",
