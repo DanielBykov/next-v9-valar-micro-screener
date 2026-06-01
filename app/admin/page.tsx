@@ -10,7 +10,6 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <LatestSnapshotCard />
       <DataCoverageCard key={`cov-${refreshKey}`} />
       <FetchStatusCard onFetchComplete={() => setRefreshKey((k) => k + 1)} />
     </div>
