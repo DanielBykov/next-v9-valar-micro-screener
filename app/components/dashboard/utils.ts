@@ -32,6 +32,13 @@ export function toNYDateString(date: Date): string {
   return date.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 }
 
+/** Returns { year, month (0-based), day } in NY timezone. */
+export function getNYDateParts(date: Date): { year: number; month: number; day: number } {
+  const str = toNYDateString(date);
+  const [y, m, d] = str.split("-").map(Number);
+  return { year: y, month: m - 1, day: d };
+}
+
 export function formatSnapshotDate(dateStr: string): string {
   const d = new Date(dateStr + 'T12:00:00-05:00');
   return d.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "America/New_York" });

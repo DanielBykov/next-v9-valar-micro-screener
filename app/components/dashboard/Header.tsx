@@ -4,14 +4,10 @@ import Link from "next/link";
 import { ScoreCalendar } from "./ScoreCalendar";
 
 export function Header({
-  snapshotScores,
-  isCalendarLoading,
   selectedDate,
   onSelectDate,
 }: {
   snapshotDate: string;
-  snapshotScores: Map<string, number>;
-  isCalendarLoading?: boolean;
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
 }) {
@@ -25,8 +21,6 @@ export function Header({
         </div>
         <div className="flex items-center gap-2">
           <ScoreCalendar
-            snapshotScores={snapshotScores}
-            isLoading={isCalendarLoading}
             selectedDate={selectedDate}
             onSelectDate={onSelectDate}
           />

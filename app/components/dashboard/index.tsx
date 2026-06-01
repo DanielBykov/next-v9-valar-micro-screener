@@ -2,7 +2,7 @@
 
 import { useState, useEffect, SetStateAction} from "react";
 import {TooltipProvider} from "@/app/components/ui/tooltip";
-import {toNYDateString} from "./utils";
+import {toNYDateString, getNYDateParts} from "./utils";
 import type {DashboardData} from "./types";
 import {Header} from "./Header";
 import {ScoreGauge} from "./ScoreGauge";
@@ -17,22 +17,24 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [snapshotScores, setSnapshotScores] = useState<Map<string, number>>(new Map());
-  const [isCalendarLoading, setIsCalendarLoading] = useState(true);
-
-  useEffect(() => {
-    setIsCalendarLoading(true);
-    fetch("/api/snapshots")
-        .then((res) => res.json())
-        .then((list: Array<{ snapshotDate: string; totalScore: number }>) => {
-          const map = new Map<string, number>();
-          list.forEach((s) => map.set(s.snapshotDate, s.totalScore));
-          setSnapshotScores(map);
-        })
-        .catch(() => {
-        })
-        .finally(() => setIsCalendarLoading(false));
-  }, []);
+  // TODO: Score calculations temporarily disabled for faster page load.
+  // Re-enable once snapshot scoring performance is optimized.
+  // const [snapshotScores, setSnapshotScores] = useState<Map<string, number>>(new Map());
+  // const [isCalendarLoading, setIsCalendarLoading] = useState(true);
+  //
+  // useEffect(() => {
+  //   setIsCalendarLoading(true);
+  //   fetch("/api/snapshots")
+  //       .then((res) => res.json())
+  //       .then((list: Array<{ snapshotDate: string; totalScore: number }>) => {
+  //         const map = new Map<string, number>();
+  //         list.forEach((s) => map.set(s.snapshotDate, s.totalScore));
+  //         setSnapshotScores(map);
+  //       })
+  //       .catch(() => {
+  //       })
+  //       .finally(() => setIsCalendarLoading(false));
+  // }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -63,7 +65,9 @@ export default function Home() {
     );
   }
 
-  const initialDate = selectedDate ?? (data ? new Date(data.snapshot.snapshotDate + "T12:00:00-05:00") : new Date());
+  const nyNow = getNYDateParts(new Date());
+  const nyTodayDate = new Date(`${nyNow.year}-${String(nyNow.month + 1).padStart(2, "0")}-${String(nyNow.day).padStart(2, "0")}T12:00:00-05:00`);
+  const initialDate = selectedDate ?? (data ? new Date(data.snapshot.snapshotDate + "T12:00:00-05:00") : nyTodayDate);
 
   return (
       <TooltipProvider>
@@ -71,8 +75,6 @@ export default function Home() {
 
           <Header
               snapshotDate={data?.snapshot.snapshotDate ?? ""}
-              snapshotScores={snapshotScores}
-              isCalendarLoading={isCalendarLoading}
               selectedDate={initialDate}
               onSelectDate={(date: SetStateAction<Date | undefined>) => setSelectedDate(date)}
           />
