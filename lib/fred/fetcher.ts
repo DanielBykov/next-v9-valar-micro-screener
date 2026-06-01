@@ -6,6 +6,11 @@ import { SERIES_BY_BLOCK, type BlockKey } from "@/lib/fred/series-catalog";
 const FRED_SOURCE = "FRED";
 const FRED_MISSING_VALUE = ".";
 const DEFAULT_LOOKBACK_DAYS = 90;
+const FRED_REQUEST_DELAY_MS = 600;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export type FredObservation = {
   date: string;
@@ -115,6 +120,36 @@ async function upsertSeriesObservations(
   return rows.length;
 }
 
+export type FetchAndStoreAllResult = {
+  block: "all";
+  start: string;
+  end: string;
+  totalStored: number;
+  results: SeriesResultSummary[];
+};
+
+export async function fetchAndStoreAllBlocks(
+  start?: string,
+  end?: string,
+): Promise<FetchAndStoreAllResult> {
+  const blockKeys = Object.keys(SERIES_BY_BLOCK) as BlockKey[];
+  const summaries: FetchAndStoreBlockResult[] = [];
+  for (const key of blockKeys) {
+    summaries.push(await fetchAndStoreBlock(key, start, end));
+  }
+
+  const results = summaries.flatMap((s) => s.results);
+  const totalStored = summaries.reduce((sum, s) => sum + s.totalStored, 0);
+
+  return {
+    block: "all",
+    start: summaries[0]?.start ?? "",
+    end: summaries[0]?.end ?? "",
+    totalStored,
+    results,
+  };
+}
+
 export async function fetchAndStoreBlock(
   blockKey: BlockKey,
   start?: string,
@@ -129,32 +164,15 @@ export async function fetchAndStoreBlock(
   const effectiveStart = start ?? range.start;
   const effectiveEnd = end ?? range.end;
 
-  const settled = await Promise.allSettled(
-    seriesList.map((seriesId) =>
-      fetchSeriesObservations(seriesId, effectiveStart, effectiveEnd),
-    ),
-  );
-
   const results: SeriesResultSummary[] = [];
   let totalStored = 0;
 
   for (let i = 0; i < seriesList.length; i++) {
     const seriesId = seriesList[i];
-    const outcome = settled[i];
-
-    if (outcome.status === "rejected") {
-      const err = outcome.reason;
-      results.push({
-        seriesId,
-        status: "error",
-        count: 0,
-        error: err instanceof Error ? err.message : String(err),
-      });
-      continue;
-    }
-
+    if (i > 0) await delay(FRED_REQUEST_DELAY_MS);
     try {
-      const count = await upsertSeriesObservations(seriesId, outcome.value.observations);
+      const fetched = await fetchSeriesObservations(seriesId, effectiveStart, effectiveEnd);
+      const count = await upsertSeriesObservations(seriesId, fetched.observations);
       totalStored += count;
       results.push({ seriesId, status: "ok", count });
     } catch (err) {

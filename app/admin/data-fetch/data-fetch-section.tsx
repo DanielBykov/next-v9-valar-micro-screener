@@ -21,6 +21,11 @@ type FetchResult = {
 
 const BLOCK_OPTIONS: { key: string; label: string; seriesPreview: string }[] = [
   {
+    key: "all",
+    label: "All FRED Series",
+    seriesPreview: "All blocks below combined",
+  },
+  {
     key: "rates",
     label: "Rates & CB Policy",
     seriesPreview: "DFF, T10Y2Y, WALCL, DGS10, T10YIE, DFEDTARU",
@@ -29,6 +34,16 @@ const BLOCK_OPTIONS: { key: string; label: string; seriesPreview: string }[] = [
     key: "inflation_labor",
     label: "Inflation & Labor",
     seriesPreview: "CPIAUCSL, CPILFESL, UNRATE, PAYEMS, CES0500000003, CIVPART",
+  },
+  {
+    key: "sentiment_risk",
+    label: "Sentiment & Risk",
+    seriesPreview: "VIXCLS",
+  },
+  {
+    key: "commodities_global",
+    label: "Commodities & Global Flow",
+    seriesPreview: "DCOILWTICO, DTWEXBGS, PCOPPUSDM, SOFR, IORB",
   },
 ];
 

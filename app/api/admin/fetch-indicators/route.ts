@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchAndStoreBlock } from "@/lib/fred/fetcher";
+import { fetchAndStoreBlock, fetchAndStoreAllBlocks } from "@/lib/fred/fetcher";
 import { isBlockKey } from "@/lib/fred/series-catalog";
 import { requireAuth } from "@/lib/auth";
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   if (!block) {
     return NextResponse.json({ message: "block query param is required" }, { status: 400 });
   }
-  if (!isBlockKey(block)) {
+  if (block !== "all" && !isBlockKey(block)) {
     return NextResponse.json({ message: `Unknown block: ${block}` }, { status: 400 });
   }
 
@@ -38,6 +38,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    if (block === "all") {
+      const summary = await fetchAndStoreAllBlocks(start ?? undefined, end ?? undefined);
+      const anySuccess = summary.results.some((r) => r.status === "ok");
+      const status = anySuccess ? 200 : 502;
+      return NextResponse.json(summary, { status });
+    }
+
     const summary = await fetchAndStoreBlock(block, start ?? undefined, end ?? undefined);
     const anySuccess = summary.results.some((r) => r.status === "ok");
     const status = anySuccess ? 200 : 502;
