@@ -94,11 +94,14 @@ Added raw indicator values (e.g. actual rate or index level) next to metric name
 - **Block-4 Commodities & Global Flow implementation**
   Implemented Block 4 (Commodities & Global Flow) with six indicators: Copper YoY, Oil (WTI) YoY, USD Broad Index (DTWEXBGS), Gold YoY, Treasury Liquidity, and Global PMIs. Each scorer includes full documentation, scoring bands, and formula traces. Integrated Block 4 into the scoring registry and FRED series catalog; added a `seed-gold.ts` script to backfill gold spot price observations. Removed Block 4 from the planned placeholders list and wired its scores into the dashboard adapter. Research doc added at `Block4_Research--commodities_global.md`. Also fixed minor issues in the VVIX and Block 3 manual seed scripts, and added Block 3 research documentation.
 
+## June 2, 2026
 - **Engine: `asOfDate` support for scoring and trend endpoints**
   Added date-aware filtering throughout the scoring engine so scores can be computed as of any historical date. Extended `/api/admin/engine/trend` to accept a `date` query parameter. On the admin Engine page, introduced an `EngineDatePicker` component that lets analysts select a date and refetch the live snapshot interactively; `IndicatorCard` and `TryItPanel` were updated to respect the selected date.
 
+## June 3, 2026
 - **Fetcher: "all blocks" fetch mode and rate-limit delay**
   Added a `fetchAndStoreAllBlocks` helper that fetches every registered FRED block in sequence with a 600 ms delay between requests to avoid API rate limits. The admin Data Fetch UI now exposes an "All FRED Series" option alongside per-block selection, and the `POST /api/admin/fetch-indicators` route handles the new `all` block parameter.
 
+## June 4, 2026
 - **Dashboard: disable snapshot scores for performance, calendar improvements**
   Temporarily disabled snapshot score computation and related UI (calendar score loading, score display) to reduce page load time. Added a `getNYDateParts` utility for consistent New York timezone date handling. Improved calendar navigation with proper date constraints and a visual indicator for today's date.
