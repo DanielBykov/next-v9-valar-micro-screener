@@ -45,6 +45,11 @@ const BLOCK_OPTIONS: { key: string; label: string; seriesPreview: string }[] = [
     label: "Commodities & Global Flow",
     seriesPreview: "DCOILWTICO, DTWEXBGS, PCOPPUSDM, SOFR, IORB",
   },
+  {
+    key: "business_cycle",
+    label: "Business Cycle & Rotation",
+    seriesPreview: "BAMLH0A0HYM2",
+  },
 ];
 
 export function DataFetchSection({ onFetchComplete }: { onFetchComplete?: () => void }) {

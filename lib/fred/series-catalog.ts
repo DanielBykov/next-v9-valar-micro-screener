@@ -31,7 +31,7 @@ export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
   ],
   business_cycle: [
     "BAMLH0A0HYM2",  // ICE BofA US High Yield Index OAS, bps, daily (5.5)
-    // ISM_MFG_PMI, CB_LEI_YOY, IWM_SPY_RATIO, SPYG_SPYV_RATIO,
+    // ISM_MFG_PMI, CB_LEI_YOY, IWM_SPY_RATIO_90D_PCT, SPYG_SPYV_RATIO_90D_PCT,
     // IPO_TRAILING_12M_PROCEEDS: manual inputs — bulk-seeded via
     // lib/scripts/seed-block5-manual.ts; excluded so the FRED fetcher skips them.
   ],
