@@ -2,7 +2,8 @@ export type BlockKey =
   | "rates"
   | "inflation_labor"
   | "sentiment_risk"
-  | "commodities_global";
+  | "commodities_global"
+  | "business_cycle";
 
 export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
   rates: ["DFF", "T10Y2Y", "WALCL", "DGS10", "T10YIE", "DFEDTARU"],
@@ -27,6 +28,12 @@ export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
     "IORB",          // Interest on Reserve Balances, %, daily (since Jul 2021)
     // GOLD_SPOT: not on FRED — bulk-seeded via lib/scripts/seed-gold.ts
     // GLOBAL_MFG_PMI: manual input via /admin/manual-inputs (paywalled source)
+  ],
+  business_cycle: [
+    "BAMLH0A0HYM2",  // ICE BofA US High Yield Index OAS, bps, daily (5.5)
+    // ISM_MFG_PMI, CB_LEI_YOY, IWM_SPY_RATIO, SPYG_SPYV_RATIO,
+    // IPO_TRAILING_12M_PROCEEDS: manual inputs — bulk-seeded via
+    // lib/scripts/seed-block5-manual.ts; excluded so the FRED fetcher skips them.
   ],
 };
 
