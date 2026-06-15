@@ -11,7 +11,7 @@ export function AuthButton() {
       <button
         type="button"
         onClick={logout}
-        className="ml-auto flex items-center gap-1.5 text-xs text-[text-secondary] hover:text-[text-primary] transition-colors cursor-pointer"
+        className="ml-auto flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
       >
         <LogOut className="h-3.5 w-3.5" />
         Logout
@@ -23,7 +23,7 @@ export function AuthButton() {
     <button
       type="button"
       onClick={promptLogin}
-      className="ml-auto text-xs text-[text-secondary] hover:text-[text-primary] transition-colors cursor-pointer"
+      className="ml-auto text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
     >
       Login
     </button>

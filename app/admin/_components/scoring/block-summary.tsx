@@ -48,7 +48,7 @@ export function BlockSummary({ block, liveBlock }: Props) {
                   isCurrent ? "bg-surface-overlay/60" : ""
                 }`}
               >
-                <td className="py-1.5 pr-3 text-text-faint">
+                <td className="py-1.5 pr-3 text-text-faint text-nowrap">
                   {r.min.toFixed(1)}–{r.max.toFixed(1)}
                 </td>
                 <td
