@@ -1,6 +1,7 @@
 import { businessCycleBlock } from "@/lib/scoring/blocks/business-cycle";
 import { commoditiesGlobalBlock } from "@/lib/scoring/blocks/commodities-global";
 import { inflationLaborBlock } from "@/lib/scoring/blocks/inflation-labor";
+import { politicalNarrativeBlock } from "@/lib/scoring/blocks/political-narrative";
 import { ratesBlock } from "@/lib/scoring/blocks/rates";
 import { sentimentRiskBlock } from "@/lib/scoring/blocks/sentiment-risk";
 import type { IndicatorScorer } from "@/lib/scoring/indicator-scorer";
@@ -16,6 +17,7 @@ export const BLOCKS: BlockDefinition[] = [
   sentimentRiskBlock,
   commoditiesGlobalBlock,
   businessCycleBlock,
+  politicalNarrativeBlock,
 ];
 
 export function getBlockByKey(key: string): BlockDefinition | undefined {

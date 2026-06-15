@@ -8,9 +8,7 @@ import { getScorerByKey } from "@/lib/scoring/registry";
  * dashboard as "Planned" placeholder cards so the layout reflects the
  * intended six-block design.
  */
-export const PLANNED_BLOCK_NAMES = [
-  "Narrative & Political Risk",
-];
+export const PLANNED_BLOCK_NAMES: string[] = [];
 
 const TOP_DRIVER_MAX_SCORE = 2;
 const BLOCK_MAX_SCORE = 20;

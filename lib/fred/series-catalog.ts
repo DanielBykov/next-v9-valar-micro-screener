@@ -3,7 +3,8 @@ export type BlockKey =
   | "inflation_labor"
   | "sentiment_risk"
   | "commodities_global"
-  | "business_cycle";
+  | "business_cycle"
+  | "political_narrative";
 
 export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
   rates: ["DFF", "T10Y2Y", "WALCL", "DGS10", "T10YIE", "DFEDTARU"],
@@ -34,6 +35,12 @@ export const SERIES_BY_BLOCK: Record<BlockKey, readonly string[]> = {
     // ISM_MFG_PMI, CB_LEI_YOY, IWM_SPY_RATIO_90D_PCT, SPYG_SPYV_RATIO_90D_PCT,
     // IPO_TRAILING_12M_PROCEEDS: manual inputs — bulk-seeded via
     // lib/scripts/seed-block5-manual.ts; excluded so the FRED fetcher skips them.
+  ],
+  political_narrative: [
+    "USEPUINDXM",  // Baker-Bloom-Davis US Economic Policy Uncertainty, monthly (6.2)
+    // EPU_CHINA (6.1), GPR_MONTHLY (6.3), GDELT_FEAR_TONE (6.4),
+    // SANCTIONS_ACTIVITY (6.5), GLOBAL_EASING (6.6): manual inputs — bulk-seeded
+    // via lib/scripts/seed-block6-manual.ts; excluded so the FRED fetcher skips them.
   ],
 };
 
