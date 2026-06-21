@@ -54,15 +54,15 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
             <Tooltip key={metric.id}>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-3 group cursor-default">
-                  <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${getMetricDot(metric.score)}`} />
+                  <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${getMetricDot(metric.score)}`} />
                   <span className="text-xs text-text-secondary flex-1 truncate group-hover:text-text-primary transition-colors">
                     {metric.name}
-                    {hasRaw && (
-                      <span className="ml-1 font-mono text-text-muted">
+                  </span>
+                  {hasRaw && (
+                      <span className="text-xs ml-1 font-mono text-text-muted">
                         ({formatRawValue(metric.rawValue, metric.unit)})
                       </span>
-                    )}
-                  </span>
+                  )}
                   <span className="text-xs font-mono text-text-primary w-8 text-right">{metric.score}/5</span>
                   <div className="w-16 h-1.5 bg-border-subtle rounded-full overflow-hidden flex-shrink-0">
                     <div
@@ -85,7 +85,7 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
       <div className="px-5 py-3 border-t border-border-subtle/50">
         {block.drivers.length > 0 && (
           <div className="flex gap-3 mb-2">
-            <span className="text-[10px] font-mono text-text-secondary uppercase tracking-wider flex-shrink-0 pt-0.5">Drivers</span>
+            <span className="text-[10px] font-mono text-text-secondary uppercase tracking-wider shrink-0 pt-0.5">Drivers</span>
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {block.drivers.map((d, j) => (
                 <span key={j} className="text-xs text-text-secondary">

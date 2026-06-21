@@ -2,11 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
-import { SERIES_BY_BLOCK } from "@/lib/fred/series-catalog";
+import { SERIES_BY_BLOCK, type BlockKey } from "@/lib/fred/series-catalog";
 
 type CoverageRow = { seriesId: string; month: string; count: number };
 
-const ALL_SERIES: string[] = Array.from(new Set(Object.values(SERIES_BY_BLOCK).flat()));
+const BLOCK_ORDER: BlockKey[] = [
+  "rates",
+  "inflation_labor",
+  "sentiment_risk",
+  "commodities_global",
+  "business_cycle",
+  "political_narrative",
+];
+
+const BLOCK_LABELS: Record<BlockKey, string> = {
+  rates: "Rates & CB Policy",
+  inflation_labor: "Inflation & Labor",
+  sentiment_risk: "Sentiment & Risk",
+  commodities_global: "Commodities & Global",
+  business_cycle: "Business Cycle",
+  political_narrative: "Political & Narrative",
+};
 
 export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string) => void }) {
   const [open, setOpen] = useState(true);
@@ -14,6 +30,7 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
   const [error, setError] = useState("");
   const [months, setMonths] = useState<string[]>([]);
   const [grid, setGrid] = useState<Record<string, Record<string, number>>>({});
+  const [collapsedBlocks, setCollapsedBlocks] = useState<Set<BlockKey>>(new Set());
 
   useEffect(() => {
     fetch("/api/admin/indicators/coverage")
@@ -41,6 +58,15 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
         setStatus("error");
       });
   }, []);
+
+  const toggleBlock = (block: BlockKey) => {
+    setCollapsedBlocks((prev) => {
+      const next = new Set(prev);
+      if (next.has(block)) next.delete(block);
+      else next.add(block);
+      return next;
+    });
+  };
 
   return (
     <section className="bg-surface-raised border border-border-subtle rounded-xl">
@@ -81,39 +107,110 @@ export function CoverageTable({ onMonthClick }: { onMonthClick?: (month: string)
             <table className="w-full text-xs font-mono">
               <thead className="bg-surface-overlay sticky top-0 z-10">
                 <tr>
-                  <th className="text-left px-4 py-2 text-text-secondary font-medium sticky left-0 bg-surface-overlay">
+                  <th
+                    rowSpan={2}
+                    className="text-left px-4 py-2 text-text-secondary font-medium sticky left-0 bg-surface-overlay border-r border-border-subtle"
+                  >
                     Month
                   </th>
-                  {ALL_SERIES.map((sid) => (
-                    <th key={sid} className="text-center px-3 py-2 text-text-secondary font-medium whitespace-nowrap">
-                      {sid}
-                    </th>
-                  ))}
+                  {BLOCK_ORDER.map((block) => {
+                    const series = SERIES_BY_BLOCK[block];
+                    if (series.length === 0) return null;
+                    const isCollapsed = collapsedBlocks.has(block);
+                    return (
+                      <th
+                        key={block}
+                        colSpan={isCollapsed ? 1 : series.length}
+                        className="px-3 py-2 text-text-secondary font-medium border-l border-border-subtle bg-surface-overlay"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleBlock(block)}
+                          className="w-full flex items-center justify-center gap-1.5 cursor-pointer hover:text-text-primary transition-colors"
+                          title={isCollapsed ? "Expand block" : "Collapse block"}
+                        >
+                          <ChevronDown
+                            className={`h-3 w-3 transition-transform ${isCollapsed ? "-rotate-90" : ""}`}
+                          />
+                          <span className="uppercase tracking-wider text-[10px]">
+                            {BLOCK_LABELS[block]}
+                          </span>
+                          <span className="text-text-secondary/60">({series.length})</span>
+                        </button>
+                      </th>
+                    );
+                  })}
+                </tr>
+                <tr>
+                  {BLOCK_ORDER.map((block) => {
+                    const series = SERIES_BY_BLOCK[block];
+                    if (series.length === 0) return null;
+                    const isCollapsed = collapsedBlocks.has(block);
+                    if (isCollapsed) {
+                      return (
+                        <th
+                          key={block}
+                          className="text-center px-3 py-2 text-text-secondary/60 font-medium border-l border-border-subtle bg-surface-overlay text-[10px]"
+                        >
+                          —
+                        </th>
+                      );
+                    }
+                    return series.map((sid, idx) => (
+                      <th
+                        key={sid}
+                        className={`text-center px-3 py-2 text-text-secondary font-medium whitespace-nowrap bg-surface-overlay ${idx === 0 ? "border-l border-border-subtle" : ""}`}
+                      >
+                        {sid}
+                      </th>
+                    ));
+                  })}
                 </tr>
               </thead>
               <tbody>
                 {months.map((month) => (
                   <tr key={month} className="border-t border-border-subtle/50 hover:bg-surface-overlay/50">
                     <td
-                      className={`px-4 py-1.5 text-text-primary text-nowrap sticky left-0 bg-surface-raised${onMonthClick ? " cursor-pointer hover:text-amber-400 transition-colors" : ""}`}
+                      className={`px-4 py-1.5 text-text-primary text-nowrap sticky left-0 bg-surface-raised border-r border-border-subtle${onMonthClick ? " cursor-pointer hover:text-amber-400 transition-colors" : ""}`}
                       onClick={() => onMonthClick?.(month)}
                     >
                       {month}
                     </td>
-                    {ALL_SERIES.map((sid) => {
-                      const count = grid[month]?.[sid] ?? 0;
-                      return (
-                        <td
-                          key={sid}
-                          className={`text-center px-3 py-1.5 ${
-                            count > 0
-                              ? "text-emerald-400 bg-emerald-500/10"
-                              : "text-border-subtle"
-                          }`}
-                        >
-                          {count || "—"}
-                        </td>
-                      );
+                    {BLOCK_ORDER.map((block) => {
+                      const series = SERIES_BY_BLOCK[block];
+                      if (series.length === 0) return null;
+                      const isCollapsed = collapsedBlocks.has(block);
+
+                      if (isCollapsed) {
+                        const withData = series.filter((sid) => (grid[month]?.[sid] ?? 0) > 0).length;
+                        const hasAny = withData > 0;
+                        return (
+                          <td
+                            key={block}
+                            className={`text-center px-3 py-1.5 border-l border-border-subtle ${
+                              hasAny ? "text-emerald-400 bg-emerald-500/10" : "text-border-subtle"
+                            }`}
+                          >
+                            {hasAny ? `${withData}/${series.length}` : "—"}
+                          </td>
+                        );
+                      }
+
+                      return series.map((sid, idx) => {
+                        const count = grid[month]?.[sid] ?? 0;
+                        return (
+                          <td
+                            key={sid}
+                            className={`text-center px-3 py-1.5 ${idx === 0 ? "border-l border-border-subtle" : ""} ${
+                              count > 0
+                                ? "text-emerald-400 bg-emerald-500/10"
+                                : "text-border-subtle"
+                            }`}
+                          >
+                            {count || "—"}
+                          </td>
+                        );
+                      });
                     })}
                   </tr>
                 ))}
