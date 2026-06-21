@@ -90,7 +90,7 @@ export default function Home() {
               ) : (
                 <>
                   <ScoreGauge snapshot={data.snapshot} />
-                  <SnapshotStats snapshot={data.snapshot} />
+                  <SnapshotStats snapshot={data.snapshot} blocks={data.blocks} />
                 </>
               )}
             </section>
@@ -111,7 +111,7 @@ export default function Home() {
                 </section>
 
                 <section>
-                  <TrendChart trendData={data.trend} />
+                  <TrendChart date={initialDate} />
                 </section>
 
                 <section>

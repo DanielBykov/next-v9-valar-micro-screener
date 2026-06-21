@@ -35,7 +35,7 @@ export function MetricsTable({ metrics }: { metrics: DashboardData["metrics"] })
               <tr>
                 <th className="px-5 py-3">Domain</th>
                 <th className="px-5 py-3">Metric</th>
-                <th className="px-5 py-3 text-center">Score (0-5)</th>
+                <th className="px-5 py-3 text-center text-nowrap">Score (0-5)</th>
                 <th className="px-5 py-3">Interpretation</th>
               </tr>
             </thead>

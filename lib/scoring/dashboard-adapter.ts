@@ -85,15 +85,56 @@ function plannedBlock(name: string, blockIndex: number): DashboardBlock {
 export type DashboardAnchors = {
   /** Snapshot for the previous calendar day; null if observations unavailable. */
   yesterday?: SnapshotResult | null;
+  /**
+   * Trailing daily snapshots ending on (and including) the as-of date, oldest
+   * first. Used to derive 3M/1Y averages and the score one year ago. When
+   * provided, it should span at least ~365 days for the 1Y figures.
+   */
+  trailing?: SnapshotResult[];
 };
+
+function average(values: number[]): number | null {
+  if (values.length === 0) return null;
+  const sum = values.reduce((acc, v) => acc + v, 0);
+  return Math.round(sum / values.length);
+}
+
+/**
+ * Derive vs3mAvg, vs1yAvg and oneYearAgoScore from a trailing daily series.
+ *
+ * The series is oldest-first and ends on the as-of date. Averages cover the
+ * trailing 90 / 365 days; the deltas are current − average. oneYearAgoScore is
+ * the score ~365 days back (first element of a full-year window).
+ */
+function deriveComparisons(
+  totalScore: number,
+  trailing: SnapshotResult[],
+): { vs3mAvg: number | null; vs1yAvg: number | null; oneYearAgoScore: number | null } {
+  if (trailing.length === 0) {
+    return { vs3mAvg: null, vs1yAvg: null, oneYearAgoScore: null };
+  }
+  const scores = trailing.map((s) => s.totalScore);
+  const last90 = scores.slice(-90);
+  const last365 = scores.slice(-365);
+
+  const avg3m = average(last90);
+  const avg1y = average(last365);
+  const oneYearAgoScore = scores.length >= 365 ? scores[scores.length - 365] : null;
+
+  return {
+    vs3mAvg: avg3m === null ? null : totalScore - avg3m,
+    vs1yAvg: avg1y === null ? null : totalScore - avg1y,
+    oneYearAgoScore,
+  };
+}
 
 /**
  * Transform a pure SnapshotResult (engine output) into the DashboardData
  * shape the dashboard UI expects.
  *
  * vsYesterday is computed when an anchors.yesterday snapshot is provided.
- * Other comparisons (vs3mAvg, vs1yAvg, oneYearAgoScore) remain null until
- * their anchor snapshots are added. Trend is returned empty.
+ * vs3mAvg / vs1yAvg / oneYearAgoScore are computed from anchors.trailing.
+ * Trend is returned empty.
  */
 export function toDashboardData(
   snapshot: SnapshotResult,
@@ -114,6 +155,11 @@ export function toDashboardData(
     ? snapshot.totalScore - anchors.yesterday.totalScore
     : null;
 
+  const { vs3mAvg, vs1yAvg, oneYearAgoScore } = deriveComparisons(
+    snapshot.totalScore,
+    anchors.trailing ?? [],
+  );
+
   return {
     snapshot: {
       id: 1,
@@ -123,9 +169,9 @@ export function toDashboardData(
       regimeSubtitle: null,
       interpretation: buildInterpretation(snapshot),
       vsYesterday,
-      vs3mAvg: null,
-      vs1yAvg: null,
-      oneYearAgoScore: null,
+      vs3mAvg,
+      vs1yAvg,
+      oneYearAgoScore,
     },
     blocks,
     metrics: flatMetrics,
@@ -135,5 +181,5 @@ export function toDashboardData(
 
 function buildInterpretation(snapshot: SnapshotResult): string {
   const implementedCount = snapshot.blocks.length;
-  return `Macro Pulse Score of ${snapshot.totalScore} (${snapshot.regime}) computed from ${implementedCount} implemented block${implementedCount === 1 ? "" : "s"}. Comparisons and trend will activate as more blocks come online.`;
+  return `Macro Pulse Score of ${snapshot.totalScore} (${snapshot.regime}) computed from ${implementedCount} implemented block${implementedCount === 1 ? "" : "s"}.`;
 }
