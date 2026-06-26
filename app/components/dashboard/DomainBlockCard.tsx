@@ -34,12 +34,12 @@ export function DomainBlockCard({ block, index }: { block: Block; index: number 
       <div className="px-5 py-4 border-b border-border-subtle/50 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-text-primary">{block.name}</h3>
         <div className="flex items-center gap-3">
-          <span
-            className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border"
-            style={{ color: signal.color, borderColor: signal.color + '33', backgroundColor: signal.color + '15' }}
-          >
-            {signal.label}
-          </span>
+          {/*<span*/}
+          {/*  className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border"*/}
+          {/*  style={{ color: signal.color, borderColor: signal.color + '33', backgroundColor: signal.color + '15' }}*/}
+          {/*>*/}
+          {/*  {signal.label}*/}
+          {/*</span>*/}
           <span className="text-lg font-bold font-mono text-text-primary">
             {block.score}<span className="text-xs text-text-secondary font-normal ml-0.5">/{block.maxScore}</span>
           </span>
