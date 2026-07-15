@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Database, LineChart, Activity, Gauge, Pencil, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { LayoutDashboard, LineChart, Activity, Gauge, Pencil, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useState } from "react";
 
 type NavItem = {
@@ -13,7 +13,6 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/database", label: "Database", icon: Database },
   { href: "/admin/data-fetch", label: "Data Fetch", icon: LineChart },
   { href: "/admin/manual-inputs", label: "Manual Inputs", icon: Pencil },
   { href: "/admin/indicators", label: "Indicators", icon: Activity },
