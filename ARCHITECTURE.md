@@ -1,7 +1,9 @@
-# VALAR Macro Screener — Macro Pulse Intelligence System
+# VALAR Macro Screener — Architecture Reference
+
+Detailed developer reference for the codebase. For a high-level overview see [README.md](./Readme.md).
 
 ## Overview
-A macroeconomic intelligence dashboard that computes and displays a Macro Pulse Score (0–120) across 6 macro domains with 36 metrics. A live scoring engine derives scores from FRED-sourced indicator observations and analyst manual inputs, classifies the macro regime, and renders results in a dark tech institutional terminal UI. Includes an admin suite for data fetching, manual data entry, and engine debugging.
+A macroeconomic intelligence dashboard that computes and displays a Macro Pulse Score (0–120) across 6 macro domains with 36 metrics. A live scoring engine derives scores from FRED-sourced indicator observations and analyst manual inputs, classifies the macro regime, and renders results in a dark tech institutional terminal UI. An AI layer generates an institutional "Analyst Note" per snapshot. Includes an admin suite for data fetching, manual data entry, and engine debugging.
 
 ## Architecture
 - **Framework**: Next.js 16 (App Router)
@@ -10,6 +12,7 @@ A macroeconomic intelligence dashboard that computes and displays a Macro Pulse 
 - **Database**: PostgreSQL with Drizzle ORM
 - **API**: Next.js Route Handlers (`app/api/`)
 - **Data source**: FRED API (cached) + analyst manual inputs
+- **AI**: Anthropic SDK (Claude Opus 4.8) for narrative generation
 
 ## Data Model (`shared/schema.ts`)
 - `snapshots` — Main snapshot record (date, total score, regime, comparisons, interpretation)
@@ -18,6 +21,7 @@ A macroeconomic intelligence dashboard that computes and displays a Macro Pulse 
 - `trendPoints` — Monthly historical trend data linked to a snapshot
 - `indicatorObservations` — Cached FRED observations (seriesId, date, value, source); unique per (seriesId, date)
 - `indicatorManualInputs` — Analyst-entered indicator values with notes; unique per (seriesId, date)
+- `snapshotNarratives` — Cached LLM-generated regime narratives, keyed by (date, input hash)
 
 ## Scoring Engine (`lib/scoring/`)
 - `registry.ts` — `BLOCKS` registry plus `getBlockByKey` / `getScorerByKey` lookups
@@ -37,6 +41,13 @@ A macroeconomic intelligence dashboard that computes and displays a Macro Pulse 
   4. `commodities-global/` — commodities & global
   5. `business-cycle/` — business cycle
   6. `political-narrative/` — political & narrative
+
+## AI Narrative Layer (`lib/ai/`)
+Read-only, fail-safe consumer of the engine output.
+- `client.ts` — Shared Anthropic client (model `claude-opus-4-8`); best-effort init, does not throw if `ANTHROPIC_API_KEY` is missing
+- `narrative.ts` — `getRegimeNarrative()` orchestrator; read-through cache (serve on hit, generate + cache on miss), structured output via Zod, prompt caching, returns `null` on failure
+- `narrative-prompt.ts` — System prompt + `serializeSnapshot()` (compact deterministic text) + `inputHash()` (SHA-256 over scores only, timestamps excluded)
+- `narrative-repo.ts` — Load/store cached narratives (`snapshotNarratives`)
 
 ## Key Files
 - `shared/schema.ts` — Drizzle schema definitions and types
@@ -66,11 +77,13 @@ A macroeconomic intelligence dashboard that computes and displays a Macro Pulse 
 - `MetricsTable.tsx` — Collapsible 36-metric intelligence table
 - `TrendChart.tsx` — 12-month trend line with regime zone shading
 - `ScoreCalendar.tsx` — Calendar date picker for snapshot selection
+- `AnalystNote.tsx` — AI-generated institutional analyst note (loads independently, skeleton while loading, renders nothing if unavailable)
 - `Skeletons.tsx` — Loading placeholders
 
 ## API Endpoints
 **Public**
 - `GET /api/dashboard?date=YYYY-MM-DD` — Snapshot, blocks with metrics, comparisons, historical stats
+- `GET /api/dashboard/narrative?date=YYYY-MM-DD` — Cached/generated AI analyst note; returns `{ narrative: null }` on graceful failure
 - `GET /api/snapshots` — Calendar of available snapshot dates with total scores (live, 90-day window)
 - `GET /api/trend?date=&granularity=monthly|daily&months=&days=` — Historical trend series (live)
 - `GET /api/mock-dashboard?snapshotId=&date=` — **FROZEN** demo endpoint (seeded data)
@@ -113,6 +126,7 @@ A macroeconomic intelligence dashboard that computes and displays a Macro Pulse 
 - `DATABASE_URL` — PostgreSQL connection string
 - `FRED_API_KEY` — FRED API key for indicator fetching
 - `ADMIN_SESSION_SECRET` — secret for signing admin session tokens
+- `ANTHROPIC_API_KEY` — Anthropic API key for AI narrative generation (optional; graceful degradation if missing)
 - `reactStrictMode: false` in `next.config.mjs`
 - `serverExternalPackages: ["pg"]` keeps the `pg` driver out of the bundle
 - `app/global-error.tsx` — catches unrecoverable errors with consistent dark-theme styling

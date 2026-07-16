@@ -12,6 +12,7 @@
     "sync:onedrive": "bash docs_local/sync-onedrive.sh"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.111.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@radix-ui/react-accordion": "^1.2.12",

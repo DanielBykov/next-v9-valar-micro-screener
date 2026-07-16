@@ -11,6 +11,7 @@ import {ScoreGaugeSkeleton, SnapshotStatsSkeleton} from "./Skeletons";
 import {DomainBlockCard} from "./DomainBlockCard";
 import {TrendChart} from "./TrendChart";
 import {MetricsTable} from "./MetricsTable";
+import {AnalystNote} from "./AnalystNote";
 
 export default function Home() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -97,6 +98,10 @@ export default function Home() {
 
             {!isLoading && data && (
               <div className="animate-in fade-in duration-500 space-y-8">
+                <section>
+                  <AnalystNote date={initialDate} />
+                </section>
+
                 <section>
                   <div className="flex items-center gap-2 mb-5">
                     <div className="h-px flex-1 bg-border-subtle" />

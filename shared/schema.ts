@@ -45,6 +45,29 @@ export const trendPoints = pgTable("trend_points", {
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
+/**
+ * Cache of LLM-generated regime narratives. Keyed by (snapshotDate, inputHash)
+ * so a narrative is regenerated only when the underlying 36 scores actually
+ * change — not on every recompute. See lib/ai/narrative-prompt.ts#inputHash.
+ */
+export const snapshotNarratives = pgTable(
+    "snapshot_narratives",
+    {
+      id: serial("id").primaryKey(),
+      snapshotDate: date("snapshot_date").notNull(),
+      inputHash: text("input_hash").notNull(),
+      headline: text("headline").notNull(),
+      narrative: text("narrative").notNull(),
+      model: text("model").notNull(),
+      generatedAt: timestamp("generated_at", { withTimezone: true }).notNull().defaultNow(),
+    },
+    (t) => [
+      uniqueIndex("snapshot_narratives_date_hash_idx").on(t.snapshotDate, t.inputHash),
+    ],
+);
+
+export type SnapshotNarrative = typeof snapshotNarratives.$inferSelect;
+
 export const insertSnapshotSchema = createInsertSchema(snapshots).omit({ id: true });
 export const insertBlockSchema = createInsertSchema(blocks).omit({ id: true });
 export const insertMetricSchema = createInsertSchema(metrics).omit({ id: true });
