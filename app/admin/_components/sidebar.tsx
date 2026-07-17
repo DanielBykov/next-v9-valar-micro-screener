@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LineChart, Activity, Gauge, Pencil, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { LayoutDashboard, LineChart, Activity, Gauge, Pencil, Sparkles, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useState } from "react";
 
 type NavItem = {
@@ -17,6 +17,7 @@ const NAV: NavItem[] = [
   { href: "/admin/manual-inputs", label: "Manual Inputs", icon: Pencil },
   { href: "/admin/indicators", label: "Indicators", icon: Activity },
   { href: "/admin/engine", label: "Engine", icon: Gauge },
+  { href: "/admin/ai", label: "AI Narratives", icon: Sparkles },
 ];
 
 export function Sidebar() {

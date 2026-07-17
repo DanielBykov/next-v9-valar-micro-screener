@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { CoverageTable } from "../_components/coverage-table";
 import { DataFetchSection } from "./data-fetch-section";
-import { AiStatusSection } from "./ai-status-section";
 
 export default function DataFetchPage() {
   const [coverageKey, setCoverageKey] = useState(0);
@@ -12,7 +11,6 @@ export default function DataFetchPage() {
     <div className="space-y-6">
       <CoverageTable key={coverageKey} />
       <DataFetchSection onFetchComplete={() => setCoverageKey((k) => k + 1)} />
-      <AiStatusSection />
     </div>
   );
 }

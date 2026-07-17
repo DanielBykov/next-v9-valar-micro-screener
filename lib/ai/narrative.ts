@@ -50,21 +50,25 @@ export type NarrativeOutcome =
  */
 export async function getRegimeNarrative(
   snapshot: SnapshotResult,
+  opts: { force?: boolean } = {},
 ): Promise<NarrativeOutcome> {
   const hash = inputHash(snapshot);
 
-  const cached = await getCachedNarrative(snapshot.asOfDate, hash);
-  if (cached) {
-    return {
-      status: "ok",
-      fromCache: true,
-      narrative: {
-        headline: cached.headline,
-        narrative: cached.narrative,
-        model: cached.model,
-        generatedAt: cached.generatedAt.toISOString(),
-      },
-    };
+  // force skips the cache read and overwrites the stored note for (date, hash).
+  if (!opts.force) {
+    const cached = await getCachedNarrative(snapshot.asOfDate, hash);
+    if (cached) {
+      return {
+        status: "ok",
+        fromCache: true,
+        narrative: {
+          headline: cached.headline,
+          narrative: cached.narrative,
+          model: cached.model,
+          generatedAt: cached.generatedAt.toISOString(),
+        },
+      };
+    }
   }
 
   if (!isNarrativeConfigured()) return { status: "disabled", reason: "no_api_key" };
@@ -84,13 +88,16 @@ export async function getRegimeNarrative(
     const parsed = res.parsed_output;
     if (!parsed) return { status: "error", reason: "empty", detail: "Model returned no parsed output" };
 
-    await putNarrative({
-      snapshotDate: snapshot.asOfDate,
-      inputHash: hash,
-      headline: parsed.headline,
-      narrative: parsed.narrative,
-      model: NARRATIVE_MODEL,
-    });
+    await putNarrative(
+      {
+        snapshotDate: snapshot.asOfDate,
+        inputHash: hash,
+        headline: parsed.headline,
+        narrative: parsed.narrative,
+        model: NARRATIVE_MODEL,
+      },
+      { overwrite: opts.force },
+    );
 
     return {
       status: "ok",
