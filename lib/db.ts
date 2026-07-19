@@ -8,7 +8,7 @@ if (!process.env.DATABASE_URL) {
 
 export const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 1,
+  max: 8,
   ssl: true,
 });
 
