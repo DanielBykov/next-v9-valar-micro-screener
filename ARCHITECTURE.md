@@ -86,7 +86,6 @@ Read-only, fail-safe consumer of the engine output.
 - `GET /api/dashboard/narrative?date=YYYY-MM-DD` — Cached/generated AI analyst note; returns `{ narrative: null }` on graceful failure
 - `GET /api/snapshots` — Calendar of available snapshot dates with total scores (live, 90-day window)
 - `GET /api/trend?date=&granularity=monthly|daily&months=&days=` — Historical trend series (live)
-- `GET /api/mock-dashboard?snapshotId=&date=` — **FROZEN** demo endpoint (seeded data)
 
 **Auth**
 - `POST /api/auth/login` — Create admin session token
@@ -99,7 +98,6 @@ Read-only, fail-safe consumer of the engine output.
 - `GET /api/admin/fred?series=&start=&end=` — Proxy to FRED API
 - `GET /api/admin/fetch-indicators` — Fetch fresh FRED data and cache it
 - `POST|GET|DELETE /api/admin/manual-inputs` — Upsert / list / delete analyst inputs
-- `POST /api/admin/clear` — Clear all dashboard data
 - `GET /api/admin/engine/live?date=` — Run engine and return raw result (blocks, indicators, traces, formulas)
 - `GET /api/admin/engine/metadata` — Full scoring registry metadata (no DB access)
 - `GET /api/admin/engine/trend?indicator=&days=&date=` — Score trend for a single indicator
@@ -130,6 +128,3 @@ Read-only, fail-safe consumer of the engine output.
 - `reactStrictMode: false` in `next.config.mjs`
 - `serverExternalPackages: ["pg"]` keeps the `pg` driver out of the bundle
 - `app/global-error.tsx` — catches unrecoverable errors with consistent dark-theme styling
-
-## Frozen Routes
-- `/mock-dashboard` and `/api/mock-dashboard` are frozen — no modifications allowed.

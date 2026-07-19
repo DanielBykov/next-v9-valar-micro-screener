@@ -27,9 +27,6 @@ Returns list of all available snapshots.
 
 ### Admin
 
-#### `POST /api/admin/clear`
-Clears all data from the database (snapshots, blocks, metrics, trendPoints).
-
 **Response**: `{ message: string }`
 **Errors**: 500
 

@@ -58,7 +58,3 @@ enable AI analyst notes (optional — the app degrades gracefully without it).
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — full developer reference: data model, engine
   internals, every file, and the complete API surface.
-
-## Notes
-
-- `/mock-dashboard` and `/api/mock-dashboard` are **frozen** demo routes — no modifications.
